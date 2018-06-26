@@ -50,3 +50,8 @@ jar {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4'
 }
+
+task build_matrices(type:Exec) {
+
+    commandLine '.\\venv\\Scripts\\python.exe', '.\\src\\main\\python\\write_gains.py'
+}

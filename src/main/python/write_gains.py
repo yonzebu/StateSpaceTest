@@ -3,6 +3,8 @@ from utilities.gains_writer import GainsWriter, numpy_to_jama_matrix
 from utilities.state_space_gains import GainsList, StateSpaceGains, default_gains
 
 
+OUT_DIR = '.\\src\\main\\java\\frc\\team687\\robot\\constants\\'
+
 A = np.asmatrix([
     [1, 3, 0],
     [3, 2, 1],
@@ -35,4 +37,4 @@ test_gains_list = GainsList(gains=[test_gains])
 
 writer = GainsWriter(test_gains_list)
 
-writer.write('..\\java\\frc\\team687\\robot\\constants\\', 0)
+writer.write(OUT_DIR, 0)

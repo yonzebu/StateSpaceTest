@@ -14,6 +14,11 @@ class GainsWriter(object):
     def __init__(self, gains: GainsList=GainsList()):
         self.gains = gains
 
+    def write_all(self, paths: list):
+        for path in paths:
+            assert isinstance(path, str), 'Directory paths must be strings'
+        assert len(paths) == len()
+
     def write(self, path: str, gains_index: int):
         current_gains = self.gains.get_gains(gains_index)
 
@@ -28,16 +33,13 @@ class GainsWriter(object):
         current_K_data = numpy_to_jama_matrix(current_gains.K)
         current_L_data = numpy_to_jama_matrix(current_gains.L)
 
-        print(current_A_data, '\n', current_B_data, '\n', current_C_data, '\n', current_D_data, '\n',
-              current_Q_noise_data, '\n', current_R_noise_data, '\n', current_K_data, '\n', current_L_data, '\n', )
-
+        # Open the file given the path, and name, truncate it to clear it, and then write the data
         javafile = open(path + current_name + '.java', 'w')
         javafile.truncate()
         javafile.write(
             '''package frc.team687.robot.constants;
 
 import Jama.Matrix;
-import frc.team687.
 
 public class {name} {{
 
@@ -65,8 +67,6 @@ public class {name} {{
     public static final Matrix L = new Matrix( new double[][]
         {L_data}
     );
-    
-    public static final 
 
 }}
             '''.format(name=current_name, A_data=current_A_data, B_data=current_B_data,
