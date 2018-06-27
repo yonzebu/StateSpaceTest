@@ -3,7 +3,7 @@ import scipy
 import scipy.signal
 
 
-def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None):
+def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None, Kff=None):
     """Checks the validity of the system based on the sizes of matrices in the system"""
 
     if A is not None:
@@ -22,6 +22,8 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
         K = np.asmatrix(K)
     if L is not None:
         L = np.asmatrix(L)
+    if Kff is not None:
+        Kff = np.asmatrix(Kff)
 
     if A is not None:
         assert A.shape[0] == A.shape[1],                                            \
@@ -63,8 +65,16 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
     if L is not None and A is not None:
         assert L.shape[0] == A.shape[0],                                            \
             "L must have the same number of rows as there are states"
+    if L is not None and C is not None:
         assert L.shape[1] == C.shape[0],                                            \
             "L must have the same number of columns as there are sensor inputs"
+
+    if Kff is not None and A is not None:
+        assert Kff.shape[1] == A.shape[1],                                          \
+            "Kff must have the same number of columns as there are states"
+    if Kff is not None and B is not None:
+        assert Kff.shape[0] == B.shape[1],                                          \
+            "Kff must have the same number of rows as there are inputs"
 
 
 def controllability(A, B):
@@ -187,16 +197,25 @@ def discrete_kalman(A, C, Q_noise, R_noise):
     # Applying lqr using A.T, C.T, Q, and R actually returns the transpose of the optimal Kalman gain L
     return np.asmatrix(dlqr(A.T, C.T, Q_noise, R_noise)).T
 
+
 def continuous_kalman(A, C, Q_noise, R_noise):
     """ Returns the optimal Kalman gain L according to the covariances and system and sensor dynamics
-        This function is specifically for continuous-time systems"""
+        This function is specifically for continuous-time systems, and probably isn't actually very useful.
+        But it was relatively easy to implement, so yay"""
 
     A = np.asmatrix(A)
     C = np.asmatrix(C)
     Q_noise = np.asmatrix(Q_noise)
     R_noise = np.asmatrix(R_noise)
-    check_validity(A=A, C=C)
+    check_validity(A=A, C=C, Q_noise=Q_noise, R_noise=R_noise)
 
     # Applying lqr using A.T, C.T, Q, and R actually returns the transpose of the optimal Kalman gain L
     return np.asmatrix(clqr(A.T, C.T, Q_noise, R_noise)).T
+
+
+def feedforward_gains(B):
+    """ Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k]
+        uff = pinv(B) * (x[k+1] - A*x[k]), so Kff = pinv(B)"""
+
+    return np.linalg.pinv(B)
 

@@ -6,6 +6,10 @@ public class MathUtils {
         return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
     }
 
+    public static double clamp(double val, double lower, double upper) {
+        return Math.max(lower, Math.min(upper, val));
+    }
+
     public static double factorial(int n) {
         if (n >= 0) {
             double product = 1;

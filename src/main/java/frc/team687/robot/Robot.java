@@ -1,8 +1,9 @@
 package frc.team687.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
 
-public class Robot extends IterativeRobot {
+import edu.wpi.first.wpilibj.TimedRobot;
+
+public class Robot extends TimedRobot {
     @Override
     public void robotInit() { }
 

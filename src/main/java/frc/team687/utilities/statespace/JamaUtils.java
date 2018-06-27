@@ -101,6 +101,25 @@ public class JamaUtils {
         return true;
     }
 
+    public static Matrix boundMatrix(Matrix X, Matrix lower, Matrix upper) {
+        if (dimsAreEqual(X, lower) && dimsAreEqual(lower, upper)) {
+            Matrix result = new Matrix(X.getRowDimension(), X.getColumnDimension());
+            // For each entry in the matrix, clamps it between the corresponding value in upper and lower
+            for (int i = 0; i < X.getRowDimension(); i++) {
+                for (int j = 0; j < X.getColumnDimension(); j++) {
+                    result.set(i, j, MathUtils.clamp(X.get(i,j), lower.get(i, j), upper.get(i, j)));
+                }
+            }
+            return result;
+        } else {
+            throw new RuntimeException("Bound and input matrices must be of equal dimensions");
+        }
+    }
+
+    public static boolean dimsAreEqual(Matrix X, Matrix Y) {
+        return (X.getRowDimension() == Y.getRowDimension() && X.getColumnDimension() == Y.getColumnDimension());
+    }
+
     public static boolean isSquare(Matrix N) {
         return N.getColumnDimension() == N.getRowDimension();
     }

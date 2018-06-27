@@ -1,6 +1,6 @@
 import numpy as np
 import scipy, math
-from utilities.state_space_utils import c2d, dlqr, discrete_kalman
+from utilities.state_space_utils import c2d, dlqr, discrete_kalman, feedforward_gains
 from utilities.state_space_gains import StateSpaceGains, GainsList
 
 
@@ -50,17 +50,15 @@ def create_gains():
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
-        [0, 1],
-        [0, k1]
+        [k1]
     ])
 
     B = np.asmatrix([
-        [0],
         [k2]
     ])
 
     C = np.asmatrix([
-        [sensor_ratio, 0]
+        [sensor_ratio]
     ])
 
     D = np.zeros((1, 1))
@@ -68,8 +66,7 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [1e-3, 0],
-        [0, 1e-4]
+        [1e-3]
     ])
 
     R_noise = np.asmatrix([
@@ -81,27 +78,32 @@ def create_gains():
     A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
 
     # LQR weight matrix Q, a diagonal matrix whose diagonals express how bad it is for the corresponding state variable
-    # to be in the wrong place. There is only one state variable here, and it doesn't need a very large penalty, since
-    # when only speed is being controlled, it's rarely very important
+    # to be in the wrong place.
+    # I found a thing that said to weight LQR weight matrices so that they are diagonal,
+    # and to use 1 / (acceptable error)^2 for each diagonal entry, each of which correspond to one state variable.
+    # In this case, I decided acceptable error was 15 deg/s, or pi/12 rad/s, so the entry in Q_weight is calculated
+    # accordingly.
     Q_weight = np.asmatrix([
-        [10, 0],
-        [0, .3]
+        [(12. / math.pi)**2]
     ])
 
     # LQR weight matrix R, a diagonal matrix similar to Q, except with regards to the inputs, rather than states
-    # Higher values along the diagonals place higher constraint on corresponding inputs
-    # There is only one input here, and it is limited in how large it can be, so the weighting is chosen to be larger
-    # than in the Q matrix
+    # Higher values along the diagonals place higher constraint on corresponding inputs.
+    # The thing that said to weight Q matrices said to weight R matrices in the same way, so, since acceptable max input
+    # is battery voltage (limited slightly in this case in case of mechanical inefficiency), the entry in R_weight is
+    # calculated accordingly
     R_weight = np.asmatrix([
-        [10]
+        [1 / ((battery_voltage * 5./6.) ** 2)]
     ])
 
     # LQR
     K = dlqr(A_d, B_d, Q_weight, R_weight)
 
+    # Kalman gains, optimal matrix for estimating and stuff
     L = discrete_kalman(A_d, C, Q_noise, R_noise)
 
-    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K, L, dt, 'MotorGains'))
-    gains.get_gains(0).print_gains()
+    Kff = np.asmatrix(feedforward_gains(B_d))
+
+    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K, L, Kff, dt, 'MotorGains'))
 
     return gains

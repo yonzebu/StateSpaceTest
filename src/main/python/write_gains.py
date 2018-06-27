@@ -13,10 +13,3 @@ OUT_DIR = '.\\src\\main\\java\\frc\\team687\\robot\\constants\\'
 writer = GainsWriter(motor.create_gains())
 # # Write the gains to the files indicated by their names, in the directory indicated
 writer.write_all(OUT_DIR)
-
-# A = np.asmatrix([
-#     [2., 3., 4.3],
-#     [1.20001, 2.000000001, 3.],
-#     [4.00000000000000000000001233, 3., 2.]
-# ])
-# print(numpy_to_jama_matrix(A))
