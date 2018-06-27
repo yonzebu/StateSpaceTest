@@ -1,6 +1,8 @@
 import numpy as np
 from utilities.gains_writer import GainsWriter, numpy_to_jama_matrix
 from utilities.state_space_gains import GainsList, StateSpaceGains, default_gains
+from utilities.state_space_utils import observability, controllability
+from robot import motor
 
 
 OUT_DIR = '.\\src\\main\\java\\frc\\team687\\robot\\constants\\'
@@ -32,9 +34,7 @@ R_noise = np.zeros((2, 2))
 K = np.zeros((2, 3))
 L = np.zeros((3, 2))
 
-test_gains = StateSpaceGains(A, B, C, D, Q_noise, R_noise, K, L, 1, 'TestGains')
-test_gains_list = GainsList(gains=[test_gains])
 
-writer = GainsWriter(test_gains_list)
+writer = GainsWriter(motor.create_gains())
 
 writer.write(OUT_DIR, 0)

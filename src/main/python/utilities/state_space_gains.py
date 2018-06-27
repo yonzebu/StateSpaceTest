@@ -1,6 +1,7 @@
 import numpy as np
 import scipy
 import scipy.signal
+from utilities.state_space_utils import check_validity, observability
 
 
 class StateSpaceGains(object):
@@ -31,52 +32,11 @@ class StateSpaceGains(object):
         return True
 
     def check_observability(self) -> bool:
+        return np.linalg.matrix_rank(observability(self.A, self.C)) == self.A.shape[0]
 
-        n = self.C.shape[0]
-        m = self.A.shape[1]
-        obsv = np.asmatrix(np.zeros((n*m, m)))
-        current_submatrix = self.C
-
-        for i in range(m):
-            obsv[i*n:i*n+n, :m] = current_submatrix
-            current_submatrix = current_submatrix * self.A
-
-        return np.linalg.matrix_rank(obsv) == self.A.shape[0]
 
     def check_system_validity(self):
-        assert self.A.shape[0] == self.A.shape[1],                                      \
-            "A must be square"
-
-        assert self.B.shape[0] == self.A.shape[0],                                      \
-            "A and B must have the same number of rows"
-    
-        assert self.C.shape[1] == self.A.shape[0],                                      \
-            "C must have as many columns as there are states"
-
-        assert self.D.shape[0] == self.C.shape[0],                                      \
-            "C and D must have the same number of rows"
-        assert self.D.shape[1] == self.B.shape[1],                                      \
-            "B and D must have the same number of columns"
-
-        assert self.Q_noise.shape[0] == self.Q_noise.shape[1],                          \
-            "Q must be square"
-        assert self.Q_noise.shape[0] == self.A.shape[0],                                \
-            "Q must have the same dimensions as A"
-
-        assert self.R_noise.shape[0] == self.R_noise.shape[1],                          \
-            "R must be square"
-        assert self.R_noise.shape[0] == self.C.shape[0],                                \
-            "R must have the same dimensions as C"
-
-        assert self.K.shape[0] == self.B.shape[1],                                      \
-            "K must have the same number of rows as there are inputs"
-        assert self.K.shape[1] == self.A.shape[0],                                      \
-            "K must have the same number of columns as there are states"
-
-        assert self.L.shape[0] == self.A.shape[0],                                      \
-            "L must have the same number of rows as there are states"
-        assert self.L.shape[1] == self.C.shape[0],                                      \
-            "L must have the same number of columns as there are sensor inputs"
+        check_validity(self.A, self.B, self.C, self.D, self.Q_noise, self.R_noise, self.K, self.L)
 
 
 default_gains = StateSpaceGains(*([np.zeros((1, 1))]*8), 1., 'default')
@@ -90,7 +50,10 @@ class GainsList(object):
             or isinstance(gains, StateSpaceGains),                                      \
             "Gains must be an instance of StateSpaceGains or a list of StateSpaceGains"
 
-        self.gains_list = gains
+        if isinstance(gains, StateSpaceGains):
+            self.gains_list = [gains]
+        else:
+            self.gains_list = gains
 
     def add_gains(self, gains):
 
