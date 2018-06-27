@@ -16,14 +16,12 @@ public class TrackReference extends Command {
         requires(Robot.motor);
         this.m_reference = reference;
 
-        this.m_ssRunner = new Notifier( () -> {
-            Robot.motor.trackGoal();
-        });
+        this.m_ssRunner = new Notifier( () -> Robot.motor.trackGoal() );
     }
 
     protected void initialize() {
         Robot.motor.setGoal(this.m_reference);
-        m_ssRunner.startPeriodic(.01);
+        m_ssRunner.startPeriodic(Robot.motor.gains().dt);
     }
 
     protected void execute() {

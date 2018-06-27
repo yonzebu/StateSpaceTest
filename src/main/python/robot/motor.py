@@ -37,6 +37,8 @@ def create_gains():
     GR = 1.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
     MoI = 1.
+    # Efficiency of the system is the ratio between actual output torque and expected output torque
+    efficiency = .9
 
     # k1 and k2, which determine the A and B matrices, are determined by solving the motor characterization equation
     # for angular acceleration
@@ -66,7 +68,7 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [1e-3]
+        [0]
     ])
 
     R_noise = np.asmatrix([

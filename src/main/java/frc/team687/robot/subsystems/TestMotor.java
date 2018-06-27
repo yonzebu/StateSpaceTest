@@ -22,6 +22,7 @@ public class TestMotor extends Subsystem {
 
     private Matrix m_currentGoal, m_currentState, m_currentInput;
 
+    public static final int kGainsIndex = 0;
     public static final Matrix kDefaultGoal = new Matrix( new double[][] {{0}} );
     public static final Matrix kEquilibriumGoal = new Matrix( new double[][] {{0}} );
     public static final Matrix kInitialState = new Matrix( new double[][] {{0}} );
@@ -66,6 +67,10 @@ public class TestMotor extends Subsystem {
         this.m_currentState = this.m_observer.newStateEstimate(this.m_currentInput, this.m_currentState);
         double voltage = this.m_controller.getBoundedOutput(this.m_currentGoal, this.m_currentState).get(0, 0);
         this.setVoltage(voltage);
+    }
+
+    public StateSpaceGains gains() {
+        return this.m_gains[kGainsIndex];
     }
 
     @Override

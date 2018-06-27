@@ -156,7 +156,10 @@ def clqr(A, B, Q_weight, R_weight):
     B = np.asmatrix(B)
     Q_weight = np.asmatrix(Q_weight)
     R_weight = np.asmatrix(R_weight)
-    check_validity(A=A, B=B)
+    check_validity(A=A, B=B, Q_noise=Q_weight, R_noise=R_weight)
+
+    assert np.linalg.matrix_rank(controllability(A, B)) == A.shape[0],              \
+        'System must be completely controllable to compute LQR gain matrix'
 
     # Use scipy's majik powers to solve the Ricatti equation
     P = np.asmatrix(scipy.linalg.solve_continuous_are(A, B, Q_weight, R_weight))
@@ -174,7 +177,10 @@ def dlqr(A, B, Q_weight, R_weight):
     B = np.asmatrix(B)
     Q_weight = np.asmatrix(Q_weight)
     R_weight = np.asmatrix(R_weight)
-    check_validity(A=A, B=B)
+    check_validity(A=A, B=B, Q_noise=Q_weight, R_noise=R_weight)
+
+    assert np.linalg.matrix_rank(controllability(A, B)) == A.shape[0],              \
+        'System must be completely controllable to compute LQR gain matrix'
 
     # Use scipy's majik powers to solve the Ricatti equation
     P = np.asmatrix(scipy.linalg.solve_discrete_are(A, B, Q_weight, R_weight))
@@ -192,7 +198,10 @@ def discrete_kalman(A, C, Q_noise, R_noise):
     C = np.asmatrix(C)
     Q_noise = np.asmatrix(Q_noise)
     R_noise = np.asmatrix(R_noise)
-    check_validity(A=A, C=C)
+    check_validity(A=A, C=C, Q_noise=Q_noise, R_noise=R_noise)
+
+    assert np.linalg.matrix_rank(observability(A, C)) == A.shape[0],                \
+        'System must be completely observable to compute Kalman gains'
 
     # Applying lqr using A.T, C.T, Q, and R actually returns the transpose of the optimal Kalman gain L
     return np.asmatrix(dlqr(A.T, C.T, Q_noise, R_noise)).T
@@ -208,6 +217,9 @@ def continuous_kalman(A, C, Q_noise, R_noise):
     Q_noise = np.asmatrix(Q_noise)
     R_noise = np.asmatrix(R_noise)
     check_validity(A=A, C=C, Q_noise=Q_noise, R_noise=R_noise)
+
+    assert np.linalg.matrix_rank(observability(A, C)) == A.shape[0],                \
+        'System must be completely observable to compute Kalman gains'
 
     # Applying lqr using A.T, C.T, Q, and R actually returns the transpose of the optimal Kalman gain L
     return np.asmatrix(clqr(A.T, C.T, Q_noise, R_noise)).T
