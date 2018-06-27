@@ -1,7 +1,7 @@
 import numpy as np
 import scipy
 import scipy.signal
-from utilities.state_space_utils import check_validity, observability
+from utilities.state_space_utils import check_validity, observability, controllability
 
 
 class StateSpaceGains(object):
@@ -28,23 +28,34 @@ class StateSpaceGains(object):
         self.check_system_validity()
 
     def check_controllability(self) -> bool:
-
-        return True
+        return np.linalg.matrix_rank(controllability(self.A, self.B)) == self.A.shape[0]
 
     def check_observability(self) -> bool:
         return np.linalg.matrix_rank(observability(self.A, self.C)) == self.A.shape[0]
 
-
     def check_system_validity(self):
         check_validity(self.A, self.B, self.C, self.D, self.Q_noise, self.R_noise, self.K, self.L)
 
+    def print_gains(self):
+        print('A = ', '\n', self.A)
+        print('B = ', '\n', self.B)
+        print('C = ', '\n', self.C)
+        print('D = ', '\n', self.D)
 
+        print('Q_noise = ', '\n', self.Q_noise)
+        print('R_noise = ', '\n', self.R_noise)
+        print('K = ', '\n', self.K)
+        print('L = ', '\n', self.L)
+
+
+# All matrices are defaulted to 1x1 zero matrices, dt is defaulted to 1, and name is defaulted to 'default'
 default_gains = StateSpaceGains(*([np.zeros((1, 1))]*8), 1., 'default')
 
 
 class GainsList(object):
+    """ A wrapper around a list of gains"""
 
-    def __init__(self, gains=[default_gains]):
+    def __init__(self, gains=default_gains):
 
         assert isinstance(gains, list) and isinstance(gains[0], StateSpaceGains)        \
             or isinstance(gains, StateSpaceGains),                                      \
@@ -55,6 +66,7 @@ class GainsList(object):
         else:
             self.gains_list = gains
 
+    # I should really just make this be a subclass of list or something
     def add_gains(self, gains):
 
         assert isinstance(gains, list) and isinstance(gains[0], StateSpaceGains)        \
@@ -68,3 +80,6 @@ class GainsList(object):
 
     def get_gains(self, index: int):
         return self.gains_list[index]
+
+    def __len__(self):
+        return len(self.gains_list)

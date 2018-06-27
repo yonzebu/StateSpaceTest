@@ -50,15 +50,17 @@ def create_gains():
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
-        [k1]
+        [0, 1],
+        [0, k1]
     ])
 
     B = np.asmatrix([
+        [0],
         [k2]
     ])
 
     C = np.asmatrix([
-        [sensor_ratio]
+        [sensor_ratio, 0]
     ])
 
     D = np.zeros((1, 1))
@@ -66,7 +68,8 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [1e-2]
+        [1e-3, 0],
+        [0, 1e-4]
     ])
 
     R_noise = np.asmatrix([
@@ -81,7 +84,8 @@ def create_gains():
     # to be in the wrong place. There is only one state variable here, and it doesn't need a very large penalty, since
     # when only speed is being controlled, it's rarely very important
     Q_weight = np.asmatrix([
-        [.1]
+        [10, 0],
+        [0, .3]
     ])
 
     # LQR weight matrix R, a diagonal matrix similar to Q, except with regards to the inputs, rather than states
@@ -98,5 +102,6 @@ def create_gains():
     L = discrete_kalman(A_d, C, Q_noise, R_noise)
 
     gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K, L, dt, 'MotorGains'))
+    gains.get_gains(0).print_gains()
 
     return gains

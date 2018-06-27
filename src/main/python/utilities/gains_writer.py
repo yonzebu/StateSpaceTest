@@ -3,21 +3,43 @@ from utilities.state_space_gains import GainsList
 
 
 def numpy_to_jama_matrix(np_matrix):
-    # Removing all square brackets and replacing them with curly brackets. Singular ending braces get a comma the end
-    curly_braces = str(np_matrix).replace('[', '{').replace(']]', '}}').replace(']', '},')
-    # Adding commas in between numbers, and then filtering the spaces replaced to remove some excess commas and add tabs
-    return curly_braces.replace(' ', ', ').replace(', {', '         {')
+    matrix = np.asmatrix(np_matrix)
+
+    # Beginning brace for the double[][]
+    output = '{'
+    # Iterates through each entry in the matrix, adding commas after individual entries and braces at the beginning
+    # and end of rows
+    for i in range(matrix.shape[0]):
+        output += '{'
+        for j in range(matrix.shape[1]):
+            output += str(matrix[i, j]) + ', '
+        # This should remove the extra comma and space
+        output = output[:-2]
+        # The spacing should work, since this is always outputting to the same type of thing
+        output += '},\n         '
+    # This is to remove the extra padding and the newline character
+    output = output[:-11]
+    # Ending brace for the double[][]
+    output += '}'
+    return output
 
 
 class GainsWriter(object):
+    """ A class to handle writing gains to Java files"""
 
     def __init__(self, gains: GainsList=GainsList()):
         self.gains = gains
 
-    def write_all(self, paths: list):
+    def write_all(self, paths):
+        assert isinstance(paths, list) and isinstance(paths[0], str) or \
+            isinstance(paths, str)
+        if isinstance(paths, str):
+            paths = [paths]
         for path in paths:
             assert isinstance(path, str), 'Directory paths must be strings'
-        assert len(paths) == len()
+        assert len(paths) == len(self.gains), 'The number of paths must be equal to the number of gains lists'
+        for i, path in enumerate(paths):
+            self.write(path, i)
 
     def write(self, path: str, gains_index: int):
         current_gains = self.gains.get_gains(gains_index)
