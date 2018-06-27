@@ -34,9 +34,9 @@ def create_gains():
     # Constants for the motor's system
 
     # Gear ratio (torque-out / torque-in), assumed to be one for simplicity
-    GR = 1
+    GR = 1.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
-    MoI = 1
+    MoI = 1.
 
     # k1 and k2, which determine the A and B matrices, are determined by solving the motor characterization equation
     # for angular acceleration
@@ -46,7 +46,7 @@ def create_gains():
     # Sensor ratio for CTRE Magnetic Encoders with Talon SRX's is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
     # Sensor ratio converts internal state (rad/s) to sensor units (ticks / .1s)
-    sensor_ratio = 10. * 2. * math.pi / 4096
+    sensor_ratio = 10. * 2. * math.pi / 4096.
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
@@ -93,7 +93,7 @@ def create_gains():
     # is battery voltage (limited slightly in this case in case of mechanical inefficiency), the entry in R_weight is
     # calculated accordingly
     R_weight = np.asmatrix([
-        [1 / ((battery_voltage * 5./6.) ** 2)]
+        [1. / ((battery_voltage * 5./6.) ** 2)]
     ])
 
     # LQR
@@ -104,6 +104,11 @@ def create_gains():
 
     Kff = np.asmatrix(feedforward_gains(B_d))
 
-    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K, L, Kff, dt, 'MotorGains'))
+    u_min = np.asmatrix([
+        [-10.]
+    ])
+    u_max = - u_min
+
+    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K, L, Kff, u_min, u_max, dt, 'MotorGains'))
 
     return gains

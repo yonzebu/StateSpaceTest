@@ -1,6 +1,7 @@
 package frc.team687.robot.constants;
 
 import Jama.Matrix;
+import frc.team687.utilities.statespace.StateSpaceGains;
 
 public class MotorGains {
 
@@ -28,6 +29,19 @@ public class MotorGains {
     public static final Matrix L = new Matrix( new double[][]
         {{0.9925925094407523}}
     );
+    public static final Matrix Kff = new Matrix( new double[][]
+        {{1690.1378020144168}}
+    );
+    public static final Matrix U_min = new Matrix( new double[][]
+        {{-10.0}}
+    );
+    public static final Matrix U_max = new Matrix( new double[][]
+        {{10.0}}
+    );
+    public static final double dt = 0.01;
+    
+    public static StateSpaceGains MotorGains = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
+                                                                K, L, Kff, dt); 
 
 }
             

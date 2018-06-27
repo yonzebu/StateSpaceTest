@@ -2,10 +2,16 @@ package frc.team687.robot;
 
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.team687.robot.subsystems.TestMotor;
 
 public class Robot extends TimedRobot {
+
+    public static TestMotor motor;
+
     @Override
-    public void robotInit() { }
+    public void robotInit() {
+        motor = new TestMotor();
+    }
 
     @Override
     public void disabledInit() { }

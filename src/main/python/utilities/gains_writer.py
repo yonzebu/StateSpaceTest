@@ -54,6 +54,10 @@ class GainsWriter(object):
         current_R_noise_data = numpy_to_jama_matrix(current_gains.R_noise)
         current_K_data = numpy_to_jama_matrix(current_gains.K)
         current_L_data = numpy_to_jama_matrix(current_gains.L)
+        current_Kff_data = numpy_to_jama_matrix(current_gains.Kff)
+        current_u_min_data = numpy_to_jama_matrix(current_gains.u_min)
+        current_u_max_data = numpy_to_jama_matrix(current_gains.u_max)
+        current_dt_data = str(current_gains.dt)
 
         # Open the file given the path, and name, truncate it to clear it, and then write the data
         javafile = open(path + current_name + '.java', 'w')
@@ -62,6 +66,7 @@ class GainsWriter(object):
             '''package frc.team687.robot.constants;
 
 import Jama.Matrix;
+import frc.team687.utilities.statespace.StateSpaceGains;
 
 public class {name} {{
 
@@ -89,10 +94,25 @@ public class {name} {{
     public static final Matrix L = new Matrix( new double[][]
         {L_data}
     );
+    public static final Matrix Kff = new Matrix( new double[][]
+        {Kff_data}
+    );
+    public static final Matrix U_min = new Matrix( new double[][]
+        {u_min_data}
+    );
+    public static final Matrix U_max = new Matrix( new double[][]
+        {u_max_data}
+    );
+    public static final double dt = {dt_data};
+    
+    public static StateSpaceGains {name} = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
+                                                                K, L, Kff, dt); 
 
 }}
             '''.format(name=current_name, A_data=current_A_data, B_data=current_B_data,
                        C_data=current_C_data, D_data=current_D_data, Q_noise_data=current_Q_noise_data,
-                       R_noise_data=current_R_noise_data, K_data=current_K_data, L_data=current_L_data)
+                       R_noise_data=current_R_noise_data, K_data=current_K_data, L_data=current_L_data,
+                       Kff_data=current_Kff_data, u_min_data=current_u_min_data, u_max_data=current_u_max_data,
+                       dt_data=current_dt_data,)
         )
         javafile.close()
