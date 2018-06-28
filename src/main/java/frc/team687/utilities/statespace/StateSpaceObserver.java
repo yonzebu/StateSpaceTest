@@ -7,13 +7,13 @@ public class StateSpaceObserver {
     private StateSpaceGains[] m_gains;
     private int m_selectedGainsIndex;
 
-    private Matrix m_currentState;
+    private Matrix m_xHat;
 
     public StateSpaceObserver(StateSpaceGains[] gains, Matrix initialState) {
         this.m_gains = gains;
         this.m_selectedGainsIndex = 0;
 
-        this.m_currentState = initialState;
+        this.m_xHat = initialState;
     }
 
     public void setGainsIndex(int index) {
@@ -25,16 +25,23 @@ public class StateSpaceObserver {
     }
 
     public Matrix newStateEstimate(Matrix u, Matrix y) {
-        StateSpaceGains currentGains = this.m_gains[m_selectedGainsIndex];
+        StateSpaceGains gains = this.m_gains[m_selectedGainsIndex];
 
-        Matrix eyeMinusKkC = Matrix.identity(currentGains.K.getRowDimension(), currentGains.K.getRowDimension())
-                .minus(currentGains.L.times(this.m_gains[m_selectedGainsIndex].C));
-        Matrix term1 = currentGains.L.times(y);
-        Matrix term2 = eyeMinusKkC.times(currentGains.A.times(this.m_currentState));
-        Matrix term3 = eyeMinusKkC.times(currentGains.B.times(u));
 
-        this.m_currentState = term1.plus(term2.plus(term3));
-        return this.m_currentState;
+        /* x_hat[k+1] = Ax_hat[k] + Bu[k] + L(y[k] - y_hat[k])
+           x_hat[k+1] = Ax_hat[k] + Bu[k] + L(y[k] - C(x_hat[k]))
+           x_hat[k+1] = Ax_hat[k] + Bu[k] + Ly[k] - LCx_hat[k]
+           x_hat[k+1] = (A - LC)x_hat[k] + Bu[k] + Ly[k]
+         */
+        // (A - LC)x_hat[k]
+        Matrix xHatTerm = gains.A.minus(gains.L.times(gains.C)).times(this.m_xHat);
+        // Bu[k]
+        Matrix Bu = gains.B.times(u);
+        // Ly[k]
+        Matrix Ly = gains.L.times(y);
+
+        this.m_xHat = xHatTerm.plus(Bu.plus(Ly));
+        return this.m_xHat;
     }
 
 }

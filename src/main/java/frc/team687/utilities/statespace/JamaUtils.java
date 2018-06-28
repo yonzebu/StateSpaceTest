@@ -49,6 +49,12 @@ public class JamaUtils {
         }
     }
 
+    // Creates an identity matrix using the dimensions of N
+    public static Matrix identity(Matrix N) {
+        assert isSquare(N) : "Matrix must be square to create identity matrix";
+        return Matrix.identity(N.getRowDimension(), N.getColumnDimension());
+    }
+
     public static double[] diagonals(Matrix N) {
         int n = N.getRowDimension();
         int m = N.getColumnDimension();

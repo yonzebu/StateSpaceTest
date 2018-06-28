@@ -4,7 +4,7 @@ def write_gains():
     from utilities.gains_writer import GainsWriter, numpy_to_jama_matrix
     from utilities.state_space_gains import GainsList, StateSpaceGains, default_gains
     from utilities.state_space_utils import observability, controllability
-    from robot import motor
+    from robot import motor_test
 
 
     # Working directory when the gradle task is run defaults to project root
@@ -13,6 +13,6 @@ def write_gains():
 
     # Create a GainsWriter from a GainsList
     # In this instance, the subsystem in question is given its own individual Python file from which gains are created
-    writer = GainsWriter(motor.create_gains())
+    writer = GainsWriter(motor_test.create_gains())
     # # Write the gains to the files indicated by their names, in the directory indicated
     writer.write_all(OUT_DIR)

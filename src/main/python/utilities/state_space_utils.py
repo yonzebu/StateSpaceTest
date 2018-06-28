@@ -77,6 +77,22 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
             "Kff must have the same number of rows as there are inputs"
 
 
+def place_poles(A, B, poles):
+
+    A = np.asmatrix(A)
+    B = np.asmatrix(B)
+    check_validity(A=A, B=B)
+    if not isinstance(poles, float):
+        assert isinstance(poles, list) and                                          \
+            (isinstance(poles[0], complex) or isinstance(poles[0], float)),         \
+            'Poles must be either a single float or a list of floats or complex numbers'
+
+    assert len(poles) == A.shape[0], 'The number of poles must equal the number of states'
+    result = scipy.signal.place_poles(A, B, poles)
+
+    return np.asmatrix(result.gain_matrix)
+
+
 def controllability(A, B):
     """ Creates the controllability matrix from matrices A and C
         If the controllability matrix has full rank, then the system is completely controllable"""
@@ -156,7 +172,7 @@ def clqr(A, B, Q_weight, R_weight):
     B = np.asmatrix(B)
     Q_weight = np.asmatrix(Q_weight)
     R_weight = np.asmatrix(R_weight)
-    check_validity(A=A, B=B, Q_noise=Q_weight, R_noise=R_weight)
+    check_validity(A=A, B=B)
 
     assert np.linalg.matrix_rank(controllability(A, B)) == A.shape[0],              \
         'System must be completely controllable to compute LQR gain matrix'
@@ -177,7 +193,7 @@ def dlqr(A, B, Q_weight, R_weight):
     B = np.asmatrix(B)
     Q_weight = np.asmatrix(Q_weight)
     R_weight = np.asmatrix(R_weight)
-    check_validity(A=A, B=B, Q_noise=Q_weight, R_noise=R_weight)
+    check_validity(A=A, B=B)
 
     assert np.linalg.matrix_rank(controllability(A, B)) == A.shape[0],              \
         'System must be completely controllable to compute LQR gain matrix'

@@ -1,7 +1,8 @@
 import numpy as np
-import scipy, math
-from utilities.state_space_utils import c2d, dlqr, discrete_kalman, feedforward_gains
+import math
+from utilities.state_space_utils import c2d, dlqr, discrete_kalman, feedforward_gains, place_poles
 from utilities.state_space_gains import StateSpaceGains, GainsList
+from utilities.motor import MotorType
 
 
 # This is a theoretical state space model for a 775pro with velocity control
@@ -9,17 +10,7 @@ from utilities.state_space_gains import StateSpaceGains, GainsList
 def create_gains():
 
     # Motor constants
-
-    # RPM to rad/s, final unit is rad/s
-    free_speed = 18730. * 2. * math.pi / 60.
-    # Current in Amps
-    free_current = .7
-    # Stall Torque in N-m
-    stall_torque = .71
-    # Stall current in Amps
-    stall_current = 134.
-    # Battery voltage in Volts
-    battery_voltage = 12.
+    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._775PRO.value
 
     # torque / Kt = I-stall, so Kt = torque / I-stall in N-m / A
     Kt = stall_torque / stall_current
@@ -31,8 +22,7 @@ def create_gains():
     # Probably not using this, actually
     d = stall_current * Kt / free_speed
 
-    # Constants for the motor's system
-
+    # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in), assumed to be one for simplicity
     GR = 1.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
@@ -48,7 +38,7 @@ def create_gains():
     # Sensor ratio for CTRE Magnetic Encoders with Talon SRX's is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
     # Sensor ratio converts internal state (rad/s) to sensor units (ticks / .1s)
-    sensor_ratio = 10. * 2. * math.pi / 4096.
+    sensor_ratio = 4096. / (2. * math.pi * 10.)
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
@@ -98,8 +88,10 @@ def create_gains():
         [1. / ((battery_voltage * 5./6.) ** 2)]
     ])
 
+    desired_poles = [-10.]
+
     # LQR
-    K = dlqr(A_d, B_d, Q_weight, R_weight)
+    K = place_poles(A_d, B_d, desired_poles)
 
     # Kalman gains, optimal matrix for estimating and stuff
     L = discrete_kalman(A_d, C, Q_noise, R_noise)

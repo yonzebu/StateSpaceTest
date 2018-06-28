@@ -62,8 +62,8 @@ class GainsWriter(object):
         # Open the file given the path, and name, truncate it to clear it, and then write the data
         javafile = open(path + current_name + '.java', 'w')
         javafile.truncate()
-        javafile.write(
-            '''package frc.team687.robot.constants;
+        javafile.write('''
+package frc.team687.robot.constants;
 
 import Jama.Matrix;
 import frc.team687.utilities.statespace.StateSpaceGains;
