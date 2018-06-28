@@ -7,10 +7,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team687.robot.commands.TrackReference;
-import frc.team687.robot.constants.MotorGains;
 import frc.team687.utilities.statespace.StateSpaceController;
 import frc.team687.utilities.statespace.StateSpaceGains;
 import frc.team687.utilities.statespace.StateSpaceObserver;
+import frc.team687.robot.constants.MotorGains;
 
 public class TestMotor extends Subsystem {
 
@@ -28,7 +28,7 @@ public class TestMotor extends Subsystem {
     public static final Matrix kInitialState = new Matrix( new double[][] {{0}} );
 
     public TestMotor() {
-        this.m_gains = new StateSpaceGains[] {MotorGains.MotorGains};
+        this.m_gains = new StateSpaceGains[] {MotorGains.kMotorGains};
         this.m_controller = new StateSpaceController(this.m_gains, MotorGains.U_min, MotorGains.U_max);
         this.m_controller.setGainsIndex(0);
         this.m_observer = new StateSpaceObserver(this.m_gains, kInitialState);

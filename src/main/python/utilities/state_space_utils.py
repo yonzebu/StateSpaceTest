@@ -242,7 +242,7 @@ def continuous_kalman(A, C, Q_noise, R_noise):
 
 
 def feedforward_gains(B):
-    """ Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k]
+    """ Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k])
         uff = pinv(B) * (x[k+1] - A*x[k]), so Kff = pinv(B)"""
 
     return np.linalg.pinv(B)

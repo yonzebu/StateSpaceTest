@@ -1,6 +1,4 @@
 import numpy as np
-import scipy
-import scipy.signal
 from utilities.state_space_utils import check_validity, observability, controllability
 
 

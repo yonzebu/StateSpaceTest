@@ -28,7 +28,7 @@ public class MotorGains {
         {{18591.521908274248}}
     );
     public static final Matrix L = new Matrix( new double[][]
-        {{1.1047581661348985e-07}}
+        {{1.1047581661622026e-07}}
     );
     public static final Matrix Kff = new Matrix( new double[][]
         {{1690.1378020144168}}
@@ -41,7 +41,7 @@ public class MotorGains {
     );
     public static final double dt = 0.01;
     
-    public static StateSpaceGains MotorGains = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
+    public static StateSpaceGains kMotorGains = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
                                                                 K, L, Kff, dt); 
 
 }

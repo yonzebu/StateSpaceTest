@@ -105,7 +105,7 @@ public class {name} {{
     );
     public static final double dt = {dt_data};
     
-    public static StateSpaceGains {name} = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
+    public static StateSpaceGains k{name} = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
                                                                 K, L, Kff, dt); 
 
 }}

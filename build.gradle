@@ -52,5 +52,5 @@ task wrapper(type: Wrapper) {
 }
 
 task build_matrices(type:Exec) {
-    commandLine '.\\venv\\Scripts\\python.exe', '.\\src\\main\\python\\main.py'
+    commandLine './venv/Scripts/python.exe', './src/main/python/robot/write_gains.py'
 }

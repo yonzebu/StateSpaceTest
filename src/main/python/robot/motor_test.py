@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from utilities.state_space_utils import c2d, dlqr, discrete_kalman, feedforward_gains, place_poles
+from utilities.state_space_utils import *
 from utilities.state_space_gains import StateSpaceGains, GainsList
 from utilities.motor import MotorType
 
@@ -90,19 +90,20 @@ def create_gains():
 
     desired_poles = [-10.]
 
-    # LQR
-    K = place_poles(A_d, B_d, desired_poles)
+    # Pole placement
+    K_d = place_poles(A_d, B_d, desired_poles)
 
     # Kalman gains, optimal matrix for estimating and stuff
-    L = discrete_kalman(A_d, C, Q_noise, R_noise)
+    L_d = discrete_kalman(A_d, C, Q_d, R_d)
 
+    # Feedforward matrix
     Kff = np.asmatrix(feedforward_gains(B_d))
 
-    u_min = np.asmatrix([
-        [-10.]
+    u_max = np.asmatrix([
+        [10.]
     ])
-    u_max = - u_min
+    u_min = -u_max
 
-    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K, L, Kff, u_min, u_max, dt, 'MotorGains'))
+    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt, 'MotorGains'))
 
     return gains
