@@ -2,6 +2,14 @@ import numpy as np
 import scipy
 import scipy.signal
 
+""" 
+A bunch of helper functions for dealing with state space stuffs 
+Mostly a wrapper to various scipy routines because scipy is majik.
+Has: pole placement, LQR, Kalman gains, controllability/observability matrices, continuous to discrete conversion
+
+Heavily inspired by 1678's controls helper stuff
+"""
+
 
 def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None, Kff=None):
     """Checks the validity of the system based on the sizes of matrices in the system"""
@@ -82,10 +90,17 @@ def place_poles(A, B, poles):
     A = np.asmatrix(A)
     B = np.asmatrix(B)
     check_validity(A=A, B=B)
-    if not isinstance(poles, float):
-        assert isinstance(poles, list) and                                          \
-            (isinstance(poles[0], complex) or isinstance(poles[0], float)),         \
+    if isinstance(poles, float):
+        poles = [poles]
+    else:
+        assert isinstance(poles, list),                                             \
             'Poles must be either a single float or a list of floats or complex numbers'
+        for pole in poles:
+            if isinstance(pole, complex):
+                assert pole.conjugate() in poles, 'Complex poles must form conjugate pairs'
+            else:
+                assert isinstance(pole, float),                                     \
+                    'Poles must be complex conjugate pairs or floats'
 
     assert len(poles) == A.shape[0], 'The number of poles must equal the number of states'
     result = scipy.signal.place_poles(A, B, poles)

@@ -88,6 +88,8 @@ def create_gains():
         [1. / ((battery_voltage * 5./6.) ** 2)]
     ])
 
+    # This was an arbitrary choice, and I'm going to actually have to look into optimal pole placement and such
+    # Maybe also matlab/octave state space sim stuff
     desired_poles = [-10.]
 
     # Pole placement
@@ -100,7 +102,7 @@ def create_gains():
     Kff = np.asmatrix(feedforward_gains(B_d))
 
     u_max = np.asmatrix([
-        [10.]
+        [battery_voltage * 5./6.]
     ])
     u_min = -u_max
 
