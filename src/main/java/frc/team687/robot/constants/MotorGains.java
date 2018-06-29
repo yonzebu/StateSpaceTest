@@ -7,10 +7,10 @@ import frc.team687.utilities.statespace.StateSpaceGains;
 public class MotorGains {
 
     public static final Matrix A = new Matrix( new double[][]
-        {{1.0000036009582518}}
+        {{0.9999935012891817}}
     );
     public static final Matrix B = new Matrix( new double[][]
-        {{0.00059166773194951}}
+        {{0.0005324982697163706}}
     );
     public static final Matrix C = new Matrix( new double[][]
         {{65.18986469044033}}
@@ -19,19 +19,19 @@ public class MotorGains {
         {{0.0}}
     );
     public static final Matrix Q_noise = new Matrix( new double[][]
-        {{0.0}}
+        {{-0.0}}
     );
     public static final Matrix R_noise = new Matrix( new double[][]
         {{0.1}}
     );
     public static final Matrix K = new Matrix( new double[][]
-        {{18591.521908274248}}
+        {{-67605.86568269193}}
     );
     public static final Matrix L = new Matrix( new double[][]
-        {{1.1047581661622026e-07}}
+        {{0.0}}
     );
     public static final Matrix Kff = new Matrix( new double[][]
-        {{1690.1378020144168}}
+        {{1877.940374402792}}
     );
     public static final Matrix U_min = new Matrix( new double[][]
         {{-10.0}}

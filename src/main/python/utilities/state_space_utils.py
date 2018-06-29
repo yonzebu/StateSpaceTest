@@ -104,6 +104,11 @@ def place_poles(A, B, poles):
 
     assert len(poles) == A.shape[0], 'The number of poles must equal the number of states'
     result = scipy.signal.place_poles(A, B, poles)
+    print(result.gain_matrix)
+
+    for requested, computed in zip(result.requested_poles, result.computed_poles):
+        if abs(requested - computed) >= 1e-8:
+            print('Requested pole %s could not be assigned and instead %s was assigned' % (requested, computed))
 
     return np.asmatrix(result.gain_matrix)
 
