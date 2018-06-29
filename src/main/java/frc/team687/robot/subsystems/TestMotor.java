@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team687.robot.commands.TrackReference;
+import frc.team687.robot.constants.TestMotorConstants;
 import frc.team687.utilities.statespace.StateSpaceController;
 import frc.team687.utilities.statespace.StateSpaceGains;
 import frc.team687.utilities.statespace.StateSpaceObserver;
@@ -22,16 +23,11 @@ public class TestMotor extends Subsystem {
 
     private Matrix m_currentGoal, m_currentState, m_currentInput;
 
-    public static final int kGainsIndex = 0;
-    public static final Matrix kDefaultGoal = new Matrix( new double[][] {{0}} );
-    public static final Matrix kEquilibriumGoal = new Matrix( new double[][] {{0}} );
-    public static final Matrix kInitialState = new Matrix( new double[][] {{0}} );
-
     public TestMotor() {
         this.m_gains = new StateSpaceGains[] {MotorGains.kMotorGains};
         this.m_controller = new StateSpaceController(this.m_gains, MotorGains.U_min, MotorGains.U_max);
         this.m_controller.setGainsIndex(0);
-        this.m_observer = new StateSpaceObserver(this.m_gains, kInitialState);
+        this.m_observer = new StateSpaceObserver(this.m_gains, TestMotorConstants.kInitialState);
         this.m_observer.setGainsIndex(0);
 
         this.m_motor = new TalonSRX(0);
@@ -41,7 +37,7 @@ public class TestMotor extends Subsystem {
         this.m_motor.setInverted(false);
         this.m_motor.setNeutralMode(NeutralMode.Coast);
 
-        this.m_currentState = kInitialState;
+        this.m_currentState = TestMotorConstants.kInitialState;
         this.m_currentInput = new Matrix( new double[][] {{0}} );
         
     }
@@ -58,6 +54,14 @@ public class TestMotor extends Subsystem {
         return this.m_motor.getSelectedSensorVelocity(0);
     }
 
+    public double getEncoderPositionTicks() {
+        return this.m_motor.getSelectedSensorPosition(0);
+    }
+
+    public void resetEncoder() {
+        this.m_motor.setSelectedSensorPosition(0, 0, 0);
+    }
+
     public void setGoal(Matrix goal) {
         this.m_currentGoal = goal;
     }
@@ -70,12 +74,12 @@ public class TestMotor extends Subsystem {
     }
 
     public StateSpaceGains gains() {
-        return this.m_gains[kGainsIndex];
+        return this.m_gains[TestMotorConstants.kGainsIndex];
     }
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new TrackReference(kEquilibriumGoal));
+        setDefaultCommand(new TrackReference(TestMotorConstants.kEquilibriumGoal));
     }
 
 }

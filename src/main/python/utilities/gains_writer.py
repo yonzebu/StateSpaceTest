@@ -1,5 +1,5 @@
 import numpy as np
-from utilities.state_space_gains import GainsList
+from utilities.state_space_gains import GainsList, StateSpaceGains, ContinuousGains
 
 
 def numpy_to_jama_matrix(np_matrix):
@@ -39,10 +39,11 @@ class GainsWriter(object):
             assert isinstance(path, str), 'Directory paths must be strings'
         assert len(paths) == len(self.gains), 'The number of paths must be equal to the number of gains lists'
         for i, path in enumerate(paths):
-            self.write(path, i)
+            self.write_discrete_gains(path, i)
 
-    def write(self, path: str, gains_index: int):
+    def write_discrete_gains(self, path: str, gains_index: int):
         current_gains = self.gains.get_gains(gains_index)
+        assert isinstance(current_gains, StateSpaceGains)
 
         current_name = current_gains.name
 
@@ -115,4 +116,57 @@ public class {name} {{
                        Kff_data=current_Kff_data, u_min_data=current_u_min_data, u_max_data=current_u_max_data,
                        dt_data=current_dt_data,)
         )
+        javafile.close()
+
+    def write_continous_gains(self, path: str, gains_index: int):
+        current_gains = self.gains.get_gains(gains_index)
+        assert isinstance(current_gains, ContinuousGains)
+
+        current_name = current_gains.name
+
+        current_A_data = numpy_to_jama_matrix(current_gains.A)
+        current_B_data = numpy_to_jama_matrix(current_gains.B)
+        current_C_data = numpy_to_jama_matrix(current_gains.C)
+        current_D_data = numpy_to_jama_matrix(current_gains.D)
+        current_B_ref_data = numpy_to_jama_matrix(current_gains.B_ref)
+        current_u_min_data = numpy_to_jama_matrix(current_gains.u_min)
+        current_u_max_data = numpy_to_jama_matrix(current_gains.u_max)
+
+        # Open the file given the path, and name, truncate it to clear it, and then write the data
+        javafile = open(path + current_name + '.java', 'w')
+        javafile.truncate()
+        javafile.write('''
+package frc.team687.robot.constants;
+
+import Jama.Matrix;
+import frc.team687.utilities.statespace.StateSpaceGains;
+
+public class {name} {{
+
+    public static final Matrix A = new Matrix( new double[][]
+        {A_data}
+    );
+    public static final Matrix B = new Matrix( new double[][]
+        {B_data}
+    );
+    public static final Matrix C = new Matrix( new double[][]
+        {C_data}
+    );
+    public static final Matrix D = new Matrix( new double[][]
+        {D_data}
+    );
+    public static final Matrix B_ref = new Matrix( new double[][]
+        {B_ref_data}
+    );
+    public static final Matrix U_min = new Matrix( new double[][]
+        {u_min_data}
+    );
+    public static final Matrix U_max = new Matrix( new double[][]
+        {u_max_data}
+    );
+
+}}
+            '''.format(name=current_name, A_data=current_A_data, B_data=current_B_data,
+                       C_data=current_C_data, D_data=current_D_data, B_ref_data=current_B_ref_data,
+                       u_min_data=current_u_min_data, u_max_data=current_u_max_data))
         javafile.close()

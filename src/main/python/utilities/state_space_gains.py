@@ -2,9 +2,13 @@ import numpy as np
 from utilities.state_space_utils import check_validity, observability, controllability
 
 
-class StateSpaceGains(object):
+class Gains(object):
+    """ Base class for the two gains variants"""
+    pass
 
-    def __init__(self, A, B, C, D, Q_noise, R_noise, K, L, Kff, u_min, u_max, dt: float, name: str):
+class StateSpaceGains(Gains):
+
+    def __init__(self, name: str, A, B, C, D, Q_noise, R_noise, K, L, Kff, u_min, u_max, dt: float):
         self.A = np.asmatrix(A)
         self.B = np.asmatrix(B)
         self.C = np.asmatrix(C)
@@ -54,8 +58,30 @@ class StateSpaceGains(object):
         print('u_max = ', '\n', self.u_max)
 
 
+class ContinuousGains(Gains):
+    """ This is a dumb class which I probably auin't using"""
+
+    def __init__(self, name: str, A, B, C, D, u_min, u_max, B_ref=None):
+
+        self.A = np.asmatrix(A)
+        self.B = np.asmatrix(B)
+        self.C = np.asmatrix(C)
+        self.D = np.asmatrix(D)
+
+        # Hopefully B_ref * x + A*x = dx/dt = 0
+        if B_ref is not None:
+            self.B_ref = np.asmatrix(B_ref)
+        else:
+            self.B_ref = np.linalg.pinv(B) * -self.A
+
+        self.u_min = np.asmatrix(u_min)
+        self.u_max = np.asmatrix(u_max)
+
+        self.name = name
+
+
 # All matrices are defaulted to 1x1 zero matrices, dt is defaulted to 1, and name is defaulted to 'default'
-default_gains = StateSpaceGains(*([np.zeros((1, 1))]*11), 1., 'default')
+default_gains = StateSpaceGains('default', *([np.zeros((1, 1))]*11), 1.)
 
 
 class GainsList(object):
@@ -63,11 +89,11 @@ class GainsList(object):
 
     def __init__(self, gains=default_gains):
 
-        assert isinstance(gains, list) and isinstance(gains[0], StateSpaceGains)        \
-            or isinstance(gains, StateSpaceGains),                                      \
-            "Gains must be an instance of StateSpaceGains or a list of StateSpaceGains"
+        assert isinstance(gains, list) and isinstance(gains[0], Gains)              \
+            or isinstance(gains, Gains),                                            \
+            "Gains must be an instance of Gains or a list of Gains"
 
-        if isinstance(gains, StateSpaceGains):
+        if isinstance(gains, Gains):
             self.gains_list = [gains]
         else:
             self.gains_list = gains
@@ -75,9 +101,9 @@ class GainsList(object):
     # I should really just make this be a subclass of list or something
     def add_gains(self, gains):
 
-        assert isinstance(gains, list) and isinstance(gains[0], StateSpaceGains)        \
-            or isinstance(gains, StateSpaceGains),                                      \
-            "Gains must be an instance of StateSpaceGains or a list of StateSpaceGains"
+        assert isinstance(gains, list) and isinstance(gains[0], Gains)              \
+            or isinstance(gains, Gains),                                            \
+            "Gains must be an instance of Gains or a list of Gains"
 
         if isinstance(gains, list):
             self.gains_list += gains

@@ -97,7 +97,7 @@ def create_gains():
     # This was an arbitrary choice, and I'm going to actually have to look into optimal pole placement and such
     # Maybe also matlab/octave state space sim stuff
     # Pole placement actually doesn't seem to quite be working for velocity-controlled motors
-    desired_poles = [37.7986168]
+    desired_poles = [-10., -11.]
 
     # Pole placement
     # K_d = place_poles(A_d, B_d, desired_poles)
@@ -116,7 +116,7 @@ def create_gains():
     ])
     u_min = -u_max
 
-    gains = GainsList(StateSpaceGains(A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt, 'MotorGains'))
+    gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
 
     return gains
 
@@ -137,7 +137,7 @@ def gen_points():
 def sim():
     for i, x in enumerate(gen_points()):
         print('t =', float(i)*0.01, '\n x = ', x, '\n\n')
-        if abs(x[0, 0]) < 1e-3:
+        if abs(x[0, 0]) < 1e-3 and abs(x[1, 0]) < 1e-3:
             break
 
 

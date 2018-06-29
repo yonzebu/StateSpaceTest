@@ -2,6 +2,8 @@ package frc.team687.robot;
 
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team687.robot.commands.ResetMotorEncoder;
 import frc.team687.robot.subsystems.TestMotor;
 
 public class Robot extends TimedRobot {
@@ -20,7 +22,9 @@ public class Robot extends TimedRobot {
     public void autonomousInit() { }
 
     @Override
-    public void teleopInit() { }
+    public void teleopInit() {
+        Scheduler.getInstance().add(new ResetMotorEncoder());
+    }
 
     @Override
     public void testInit() { }
@@ -33,7 +37,9 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() { }
 
     @Override
-    public void teleopPeriodic() { }
+    public void teleopPeriodic() {
+        Scheduler.getInstance().run();
+    }
 
     @Override
     public void testPeriodic() { }

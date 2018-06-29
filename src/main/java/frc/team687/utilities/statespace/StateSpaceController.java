@@ -6,6 +6,7 @@ public class StateSpaceController {
 
     private StateSpaceGains[] m_gains;
     private Matrix m_U_min, m_U_max;
+    private StateSpaceObserver m_observer;
 
     private int m_selectedGainsIndex;
 
@@ -21,7 +22,7 @@ public class StateSpaceController {
         this.m_selectedGainsIndex = index;
     }
 
-    public Matrix getDesiredOutput(Matrix nextGoal, Matrix estimatedState) {
+    public Matrix getFeedforwardOutput(Matrix nextGoal, Matrix estimatedState) {
         StateSpaceGains currentGains = this.m_gains[this.m_selectedGainsIndex];
 
         // Discrete-time reference tracking feedforward input: u_ff[k] = pinv(B) * (x[k+1] - Ax^[k]),
@@ -33,6 +34,16 @@ public class StateSpaceController {
 
         // u = uc + uff
         return Uc.plus(Uff);
+    }
+
+    public Matrix getDesiredOutput(Matrix reference, Matrix estimatedState) {
+        StateSpaceGains currentGains = this.m_gains[this.m_selectedGainsIndex];
+
+//        Matrix Ud = currentGains;
+
+        Matrix Uc = currentGains.K.times(estimatedState.minus(reference));
+
+        return Uc;
     }
 
     public Matrix getBoundedOutput(Matrix reference, Matrix estimatedState) {

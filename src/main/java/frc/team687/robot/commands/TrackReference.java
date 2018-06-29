@@ -4,6 +4,7 @@ import Jama.Matrix;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team687.robot.Robot;
+import frc.team687.robot.constants.TestMotorConstants;
 import frc.team687.robot.subsystems.TestMotor;
 
 public class TrackReference extends Command {
@@ -16,7 +17,9 @@ public class TrackReference extends Command {
         requires(Robot.motor);
         this.m_reference = reference;
 
-        this.m_ssRunner = new Notifier( () -> Robot.motor.trackGoal() );
+        this.m_ssRunner = new Notifier( () -> {
+            Robot.motor.trackGoal();
+        } );
     }
 
     protected void initialize() {
@@ -34,7 +37,7 @@ public class TrackReference extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-        Robot.motor.setGoal(TestMotor.kEquilibriumGoal);
+        Robot.motor.setGoal(TestMotorConstants.kEquilibriumGoal);
     }
 
     // Called when another command which requires one or more of the same
