@@ -51,10 +51,19 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.4'
 }
 
+import org.apache.tools.ant.taskdefs.condition.Os
 task build_matrices(type:Exec) {
-    commandLine './venv/Scripts/python.exe', './src/main/python/robot/write_gains.py'
+    if (Os.isFamily(Os.FAMILY_WINDOWS)){
+        commandLine './venv/Scripts/python.exe', './src/main/python/robot/write_gains.py'
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+        commandLine './venv2/bin/python', './src/main/python/robot/write_gains.py'
+    }
 }
 
 task sim_stuff(type:Exec) {
-    commandLine './venv/Scripts/python.exe', './src/main/python/robot/motor_test.py'
+    if (Os.isFamily(Os.FAMILY_WINDOWS)){
+        commandLine './venv/Scripts/python.exe', './src/main/python/robot/motor_test.py'
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+        commandLine './venv2/bin/python', './src/main/python/robot/motor_test.py'
+    }
 }
