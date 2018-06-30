@@ -111,16 +111,23 @@ def create_gains():
     # Feedforward matrix
     Kff = np.asmatrix(feedforward_gains(B_d))
 
+    # Reference-tracking matrix, used to track arbitrary step reference measurements
+    # Calculated in discrete time as N = inv( -C_d * inv(A_d - B_d*K - I) * B_d), where I is the identity matrix
+    # equivalent in dimension to A
+    n = A_d.shape[0]
+    N = np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A_d - B_d*K_d - np.identity(n)) * B_d))
+
     u_max = np.asmatrix([
         [battery_voltage * 5./6.]
     ])
     u_min = -u_max
 
-    gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
+    gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, N, u_min, u_max, dt))
 
     return gains
 
 
+# I really need to actually get around to doing this
 def gen_points():
     gains = create_gains().get_gains(0)
     reference = np.asmatrix([[math.pi / 2.]])

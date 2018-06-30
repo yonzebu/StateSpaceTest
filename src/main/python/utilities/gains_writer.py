@@ -27,7 +27,7 @@ def numpy_to_jama_matrix(np_matrix):
 class GainsWriter(object):
     """ A class to handle writing gains to Java files"""
 
-    def __init__(self, gains: GainsList=GainsList()):
+    def __init__(self, gains: GainsList):
         self.gains = gains
 
     def write_all(self, paths):
@@ -56,11 +56,13 @@ class GainsWriter(object):
         current_K_data = numpy_to_jama_matrix(current_gains.K)
         current_L_data = numpy_to_jama_matrix(current_gains.L)
         current_Kff_data = numpy_to_jama_matrix(current_gains.Kff)
+        current_N_data = numpy_to_jama_matrix(current_gains.N)
         current_u_min_data = numpy_to_jama_matrix(current_gains.u_min)
         current_u_max_data = numpy_to_jama_matrix(current_gains.u_max)
         current_dt_data = str(current_gains.dt)
 
         # Open the file given the path, and name, truncate it to clear it, and then write the data
+        print(path + current_name + '.java')
         javafile = open(path + current_name + '.java', 'w')
         javafile.truncate()
         javafile.write('''
@@ -98,6 +100,9 @@ public class {name} {{
     public static final Matrix Kff = new Matrix( new double[][]
         {Kff_data}
     );
+    public static final Matrix N = new Matrix( new double[][]
+        {N_data}
+    );
     public static final Matrix U_min = new Matrix( new double[][]
         {u_min_data}
     );
@@ -107,14 +112,14 @@ public class {name} {{
     public static final double dt = {dt_data};
     
     public static StateSpaceGains k{name} = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
-                                                                K, L, Kff, dt); 
+                                                                K, L, Kff, N, dt); 
 
 }}
             '''.format(name=current_name, A_data=current_A_data, B_data=current_B_data,
                        C_data=current_C_data, D_data=current_D_data, Q_noise_data=current_Q_noise_data,
                        R_noise_data=current_R_noise_data, K_data=current_K_data, L_data=current_L_data,
-                       Kff_data=current_Kff_data, u_min_data=current_u_min_data, u_max_data=current_u_max_data,
-                       dt_data=current_dt_data,)
+                       Kff_data=current_Kff_data, N_data=current_N_data, u_min_data=current_u_min_data,
+                       u_max_data=current_u_max_data, dt_data=current_dt_data,)
         )
         javafile.close()
 

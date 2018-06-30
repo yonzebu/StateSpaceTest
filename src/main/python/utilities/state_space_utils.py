@@ -11,7 +11,7 @@ Heavily inspired by 1678's controls helper stuff
 """
 
 
-def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None, Kff=None):
+def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None, Kff=None, N=None):
     """Checks the validity of the system based on the sizes of matrices in the system"""
 
     if A is not None:
@@ -32,6 +32,8 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
         L = np.asmatrix(L)
     if Kff is not None:
         Kff = np.asmatrix(Kff)
+    if N is not None:
+        N = np.asmatrix(N)
 
     if A is not None:
         assert A.shape[0] == A.shape[1],                                            \
@@ -39,50 +41,57 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
 
     if A is not None and B is not None:
         assert B.shape[0] == A.shape[0],                                            \
-            "A and B must have the same number of rows"
+            'A and B must have the same number of rows'
 
     if A is not None and C is not None:
         assert C.shape[1] == A.shape[0],                                            \
-            "C must have as many columns as there are states"
+            'C must have as many columns as there are states'
 
     if D is not None and C is not None:
         assert D.shape[0] == C.shape[0],                                            \
-            "C and D must have the same number of rows"
+            'C and D must have the same number of rows'
     if D is not None and B is not None:
         assert D.shape[1] == B.shape[1],                                            \
-            "B and D must have the same number of columns"
+            'B and D must have the same number of columns'
 
     if Q_noise is not None and A is not None:
         assert Q_noise.shape == A.shape,                                            \
-            "Q must have the same dimensions as A"
+            'Q must have the same dimensions as A'
 
     if R_noise is not None:
         assert R_noise.shape[0] == R_noise.shape[1],                                \
-            "R must be square"
+            'R must be square'
     if R_noise is not None and C is not None:
         assert R_noise.shape[0] == C.shape[0],                                      \
-            "R must have the same number of rows as there are sensor inputs"
+            'R must have the same number of rows as there are sensor inputs'
 
     if K is not None and B is not None:
         assert K.shape[0] == B.shape[1],                                            \
-            "K must have the same number of rows as there are inputs"
+            'K must have the same number of rows as there are inputs'
     if K is not None and A is not None:
         assert K.shape[1] == A.shape[0],                                            \
-            "K must have the same number of columns as there are states"
+            'K must have the same number of columns as there are states'
 
     if L is not None and A is not None:
         assert L.shape[0] == A.shape[0],                                            \
-            "L must have the same number of rows as there are states"
+            'L must have the same number of rows as there are states'
     if L is not None and C is not None:
         assert L.shape[1] == C.shape[0],                                            \
-            "L must have the same number of columns as there are sensor inputs"
+            'L must have the same number of columns as there are sensor inputs'
 
     if Kff is not None and A is not None:
         assert Kff.shape[1] == A.shape[1],                                          \
-            "Kff must have the same number of columns as there are states"
+            'Kff must have the same number of columns as there are states'
     if Kff is not None and B is not None:
         assert Kff.shape[0] == B.shape[1],                                          \
-            "Kff must have the same number of rows as there are inputs"
+            'Kff must have the same number of rows as there are inputs'
+
+    if N is not None and C is not None:
+        assert N.shape[1] == C.shape[0],                                            \
+            'N must have the same number of columns as there are sensor inputs'
+    if N is not None and B is not None:
+        assert N.shape[0] == B.shape[1],                                            \
+            'N must have the same number of rows as there are inputs'
 
 
 def place_poles(A, B, poles):
@@ -261,9 +270,45 @@ def continuous_kalman(A, C, Q_noise, R_noise):
     return np.asmatrix(clqr(A.T, C.T, Q_noise, R_noise)).T
 
 
+def tracking_gains_d(A_d, B_d, C, K_d):
+    """
+    Calculates the reference tracking gains in discrete time for tracking arbitrary step inputs
+    In discrete time, N = - inv(C * inv(A - B*K - I) * B), where I is an n x n identity matrix, and n is the size of A
+    """
+
+    A_d = np.asmatrix(A_d)
+    B_d = np.asmatrix(B_d)
+    C = np.asmatrix(C)
+    K_d = np.asmatrix(K_d)
+    check_validity(A=A_d, B=B_d, C=C, K=K_d)
+
+    n = A_d.shape[0]
+    return np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A_d - B_d*K_d - np.identity(n)) * B_d))
+
+
+def tracking_gains_c(A, B, C, K):
+    """
+    Calculates the reference tracking gains in continuous time for tracking arbitrary step inputs
+    In continuous time, N = - inv(C * inv(A - B*K) * B)
+    """
+
+    A = np.asmatrix(A)
+    B = np.asmatrix(B)
+    C = np.asmatrix(C)
+    K = np.asmatrix(K)
+    check_validity(A=A, B=B, C=C, K=K)
+
+    n = A_d.shape[0]
+    return np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A - B*K) * B))
+
+
 def feedforward_gains(B):
-    """ Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k])
-        uff = pinv(B) * (x[k+1] - A*x[k]), so Kff = pinv(B)"""
+    """
+    Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k])
+    uff = pinv(B) * (x[k+1] - A*x[k]), so Kff = pinv(B)
+    According to 1678 and 971, there's an LQR-weighted solution or something like that, but I'm averse to implementing
+    things that I haven't seen a mathematical background for.
+    """
 
     return np.linalg.pinv(B)
 
