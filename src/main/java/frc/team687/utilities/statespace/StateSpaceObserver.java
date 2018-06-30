@@ -7,7 +7,7 @@ public class StateSpaceObserver {
     private StateSpaceGains[] m_gains;
     private int m_selectedGainsIndex;
 
-    private Matrix m_xHat;
+    private Matrix m_xHat, m_currentInput;
 
     public StateSpaceObserver(StateSpaceGains[] gains, Matrix initialState) {
         this.m_gains = gains;

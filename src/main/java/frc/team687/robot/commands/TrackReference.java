@@ -11,23 +11,24 @@ public class TrackReference extends Command {
 
     private Matrix m_reference;
 
-    private Notifier m_ssRunner;
+//    private Notifier m_ssRunner;
 
     public TrackReference(Matrix reference) {
         requires(Robot.motor);
         this.m_reference = reference;
 
-        this.m_ssRunner = new Notifier( () -> {
-            Robot.motor.trackGoal();
-        } );
+//        this.m_ssRunner = new Notifier( () -> {
+//
+//        } );
     }
 
     protected void initialize() {
         Robot.motor.setGoal(this.m_reference);
-        m_ssRunner.startPeriodic(Robot.motor.gains().dt);
+//        m_ssRunner.startPeriodic(Robot.motor.gains().dt);
     }
 
     protected void execute() {
+        Robot.motor.trackGoal();
     }
 
     @Override

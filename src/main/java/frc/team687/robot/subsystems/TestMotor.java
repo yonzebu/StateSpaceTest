@@ -8,27 +8,21 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team687.robot.commands.TrackReference;
 import frc.team687.robot.constants.TestMotorConstants;
+import frc.team687.utilities.statespace.ControllerSubsystem;
 import frc.team687.utilities.statespace.StateSpaceController;
 import frc.team687.utilities.statespace.StateSpaceGains;
 import frc.team687.utilities.statespace.StateSpaceObserver;
 import frc.team687.robot.constants.MotorGains;
 
-public class TestMotor extends Subsystem {
-
-    private StateSpaceController m_controller;
-    private StateSpaceGains[] m_gains;
-    private StateSpaceObserver m_observer;
+public class TestMotor extends ControllerSubsystem {
 
     private TalonSRX m_motor;
 
-    private Matrix m_currentGoal, m_currentState, m_currentInput;
+    private Matrix m_currentGoal;
 
     public TestMotor() {
-        this.m_gains = new StateSpaceGains[] {MotorGains.kMotorGains};
-        this.m_controller = new StateSpaceController(this.m_gains, MotorGains.U_min, MotorGains.U_max);
-        this.m_controller.setGainsIndex(0);
-        this.m_observer = new StateSpaceObserver(this.m_gains, TestMotorConstants.kInitialState);
-        this.m_observer.setGainsIndex(0);
+        super(MotorGains.kMotorGains, MotorGains.U_min, MotorGains.U_max, TestMotorConstants.kInitialState,
+                new Matrix(0,0), TestMotorConstants.kGainsIndex);
 
         this.m_motor = new TalonSRX(0);
 
@@ -36,9 +30,6 @@ public class TestMotor extends Subsystem {
         this.m_motor.setSensorPhase(false);
         this.m_motor.setInverted(false);
         this.m_motor.setNeutralMode(NeutralMode.Coast);
-
-        this.m_currentState = TestMotorConstants.kInitialState;
-        this.m_currentInput = new Matrix( new double[][] {{0}} );
         
     }
 
@@ -67,14 +58,8 @@ public class TestMotor extends Subsystem {
     }
 
     public void trackGoal() {
-        this.m_currentState.set(0, 0, this.getEncoderSpeedTicks());
-        this.m_currentState = this.m_observer.newStateEstimate(this.m_currentInput, this.m_currentState);
-        double voltage = this.m_controller.getBoundedOutput(this.m_currentGoal, this.m_currentState).get(0, 0);
-        this.setVoltage(voltage);
-    }
-
-    public StateSpaceGains gains() {
-        return this.m_gains[TestMotorConstants.kGainsIndex];
+        Matrix measurement = new Matrix(new double[][]{{this.getEncoderPositionTicks()}});
+        this.setVoltage(this.trackReference(this.m_currentGoal, measurement).get(0,0));
     }
 
     @Override

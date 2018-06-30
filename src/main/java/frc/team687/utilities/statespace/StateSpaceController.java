@@ -36,18 +36,24 @@ public class StateSpaceController {
         return Uc.plus(Uff);
     }
 
-    public Matrix getDesiredOutput(Matrix reference, Matrix estimatedState) {
+    public Matrix getReferenceTrackingOutput(Matrix reference, Matrix estimatedState) {
         StateSpaceGains currentGains = this.m_gains[this.m_selectedGainsIndex];
 
-//        Matrix Ud = currentGains;
+        Matrix ReferenceInput = currentGains.N.times(reference);
 
-        Matrix Uc = currentGains.K.times(estimatedState.minus(reference));
+        Matrix controlLawInput = currentGains.K.times(estimatedState);
 
-        return Uc;
+        // u = -K*x + N*r
+        controlLawInput.plusEquals(ReferenceInput);
+        return controlLawInput;
+    }
+
+    public Matrix boundOutput(Matrix output) {
+        return JamaUtils.boundMatrix(output, this.m_U_min, this.m_U_max);
     }
 
     public Matrix getBoundedOutput(Matrix reference, Matrix estimatedState) {
-        return JamaUtils.boundMatrix(getDesiredOutput(reference, estimatedState), this.m_U_min, this.m_U_max);
+        return this.boundOutput(getReferenceTrackingOutput(reference, estimatedState));
     }
 
 }
