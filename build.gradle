@@ -56,7 +56,7 @@ task build_matrices(type:Exec) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)){
         commandLine './venv/Scripts/python.exe', './src/main/python/robot/write_gains.py'
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
-        commandLine './venv2/bin/python', './src/main/python/robot/write_gains.py'
+        commandLine 'bash', './run_py.sh', './src/main/python/robot/write_gains.py'
     }
 }
 
@@ -64,6 +64,6 @@ task sim_stuff(type:Exec) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)){
         commandLine './venv/Scripts/python.exe', './src/main/python/robot/motor_test.py'
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
-        commandLine './venv2/bin/python', './src/main/python/robot/motor_test.py'
+        commandLine 'bash', './run_py.sh', './src/main/python/robot/motor_test.py'
     }
 }

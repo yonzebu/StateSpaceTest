@@ -103,7 +103,6 @@ def create_gains():
     # K_d = place_poles(A_d, B_d, desired_poles)
     # K_d = np.asmatrix([[10.]])
     K_d = dlqr(A_d, B_d, Q_weight, R_weight)
-    print(np.linalg.eig(A - B*K_d))
 
     # Kalman gains, optimal matrix for estimating and stuff
     L_d = discrete_kalman(A_d, C, Q_d, R_d)

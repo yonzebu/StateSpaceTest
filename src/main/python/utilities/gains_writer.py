@@ -62,7 +62,6 @@ class GainsWriter(object):
         current_dt_data = str(current_gains.dt)
 
         # Open the file given the path, and name, truncate it to clear it, and then write the data
-        print(path + current_name + '.java')
         javafile = open(path + current_name + '.java', 'w')
         javafile.truncate()
         javafile.write('''

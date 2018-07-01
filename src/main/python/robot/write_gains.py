@@ -9,7 +9,7 @@ should be generated here
 
 # Working directory when the gradle task is run defaults to project root
 # Multiple output directories can be used in addition to multiple sets of gains
-OUT_DIR = '../../java/frc/team687/robot/constants/'
+OUT_DIR = './src/main/java/frc/team687/robot/constants/'
 
 
 def write_gains():

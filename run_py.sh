@@ -1,0 +1,5 @@
+FILE_PATH=$1
+PYTHONPATH="${PYTHONPATH}:$PWD/src/main/python/"
+export PYTHONPATH
+
+python3 $FILE_PATH

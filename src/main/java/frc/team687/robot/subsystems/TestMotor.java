@@ -22,7 +22,7 @@ public class TestMotor extends ControllerSubsystem {
 
     public TestMotor() {
         super(MotorGains.kMotorGains, MotorGains.U_min, MotorGains.U_max, TestMotorConstants.kInitialState,
-                new Matrix(0,0), TestMotorConstants.kGainsIndex);
+                new Matrix(1,1), TestMotorConstants.kGainsIndex);
 
         this.m_motor = new TalonSRX(0);
 
@@ -38,7 +38,7 @@ public class TestMotor extends ControllerSubsystem {
     }
 
     public void setVoltage(double voltage) {
-        this.m_motor.set(ControlMode.PercentOutput, voltage / 12.0);
+        this.m_motor.set(ControlMode.PercentOutput, voltage / this.m_motor.getBusVoltage());
     }
 
     public double getEncoderSpeedTicks() {

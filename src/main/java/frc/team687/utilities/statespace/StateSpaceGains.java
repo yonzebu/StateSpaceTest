@@ -9,6 +9,28 @@ public class StateSpaceGains {
     public final double dt;
     public final int n, p, q;
 
+    public StateSpaceGains(int n, int p, int q) {
+        assert n > 0 && p > 0 && q > 0 : "Provided dimensions must be greater than 0";
+        this.A = new Matrix(n, n);
+        this.B = new Matrix(n, p);
+        this.C = new Matrix(q, n);
+        this.D = new Matrix(q, p);
+
+        this.Q = new Matrix(n, n);
+        this.R = new Matrix(q, q);
+
+        this.K = new Matrix(p, n);
+        this.L = new Matrix(n, q);
+        this.Kff = new Matrix(p, n);
+        this.N = new Matrix(p, q);
+
+        this.dt = 1;
+        this.n = n;
+        this.p = p;
+        this.q = q;
+
+        this.checkSystemValidity();
+    }
 
     // This is used specifically for discrete state space constants
     public StateSpaceGains(Matrix A, Matrix B, Matrix C, Matrix D, Matrix Q,
