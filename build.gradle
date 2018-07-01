@@ -54,7 +54,7 @@ task wrapper(type: Wrapper) {
 import org.apache.tools.ant.taskdefs.condition.Os
 task build_matrices(type:Exec) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)){
-        commandLine './venv/Scripts/python.exe', './src/main/python/robot/write_gains.py'
+        commandLine 'cmd', '/C', '.\\run_py.cmd', '.\\src\\main\\python\\robot\\write_gains.py'
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         commandLine 'bash', './run_py.sh', './src/main/python/robot/write_gains.py'
     }
@@ -62,7 +62,7 @@ task build_matrices(type:Exec) {
 
 task sim_stuff(type:Exec) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)){
-        commandLine './venv/Scripts/python.exe', './src/main/python/robot/motor_test.py'
+        commandLine 'cmd', '/C', '.\\run_py.cmd', '.\\src\\main\\python\\robot\\motor_test.py'
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         commandLine 'bash', './run_py.sh', './src/main/python/robot/motor_test.py'
     }

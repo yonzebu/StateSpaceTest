@@ -148,6 +148,7 @@ def sim():
 
 
 if __name__ == '__main__':
+    print('majik')
     sim()
     # gains = create_gains().get_gains(0)
 
