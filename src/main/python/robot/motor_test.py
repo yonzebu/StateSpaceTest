@@ -1,9 +1,8 @@
 import math
-import matplotlib.pyplot as plt
 from utilities.state_space.state_space_utils import *
 from utilities.state_space.state_space_gains import StateSpaceGains, GainsList
 from utilities.motor import MotorType
-from utilities.state_space.state_space_controller import StateSpaceControlSim
+from utilities.state_space.ss_sim import StateSpaceControlSim
 
 
 # This is a theoretical state space model for a 775pro with velocity control
@@ -63,15 +62,15 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [1e-2, 0],
-        [0, 1e-2]
+        [0e-2, 0],
+        [0, 0e-2]
     ])
 
     R_noise = np.asmatrix([
         [1.e-3]
     ])
 
-    dt = .01
+    dt = .02
 
     A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
 
@@ -128,8 +127,11 @@ def create_gains():
     return gains, u_max, u_min
 
 
-# I really need to actually get around to doing this
-def gen_points():
+def reference_calculator(time: float):
+    return np.zeros((1, 1)) if time < 4 else np.asmatrix([[-4096]])
+
+
+def sim():
     gains_list, u_max, u_min = create_gains()
     gains = gains_list.get_gains(0)
     x_initial = np.asmatrix([
@@ -142,35 +144,12 @@ def gen_points():
     sim = StateSpaceControlSim(gains, x_hat_initial=x_hat_initial, u_initial=u_initial, x_initial=x_initial,
                                u_max=u_max, u_min=u_min)
 
-    reference = np.zeros((1, 1))
+    plot_settings = (True, False, True, False, True, False)
+    duration = 10.
 
-    pos_list = []
-
-    for t in np.arange(start=0., stop=2., step=gains.dt):
-        pos_list += [sim.update(reference)[0][0, 0]]
-
-    return pos_list
-
-
-def sim():
-    pos_list = gen_points()
-    plt.plot(pos_list)
-    plt.show()
+    sim.plot(duration=duration, plot_setttings=plot_settings, reference_calculator=reference_calculator)
 
 
 if __name__ == '__main__':
     sim()
-    # a = np.asmatrix([
-    #     [0., 1.],
-    #     [2., .3],
-    #     [4.01, .01]
-    # ])
-    # b = np.asmatrix([
-    #     [.1, .2],
-    #     [1.786, .4],
-    #     [2.01, .005]
-    # ])
-    # c = np.asmatrix([[0]])
-    # print(np.clip(a, b, 3))
-    # gains = create_gains().get_gains(0)
 

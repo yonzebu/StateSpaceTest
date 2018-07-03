@@ -2,23 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5e010302-d080-40c1-9e09-beca1d2d7c6c" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_observer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_plant.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/ss_sim.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/StateSpaceTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/StateSpaceTest.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/ControllerSubsystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/ControllerSubsystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/StateSpaceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/StateSpaceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/StateSpaceObserver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/StateSpaceObserver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/python/python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/python.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team687/robot/constants/MotorGains.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team687/robot/constants/MotorGains.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/python/robot/motor_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/robot/motor_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/python/robot/write_gains.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/robot/write_gains.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/python/utilities/gains_writer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/gains_writer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/python/utilities/state_space_gains.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_gains.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/python/utilities/state_space_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -50,8 +42,11 @@
       <file leaf-file-name="write_gains.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/python/robot/write_gains.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
+            <state relative-caret-position="272">
+              <caret line="16" column="52" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
+              <folding>
+                <element signature="e#0#58#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -59,8 +54,11 @@
       <file leaf-file-name="gains_writer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/gains_writer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
+            <state relative-caret-position="-294">
+              <caret line="38" column="75" selection-start-line="38" selection-start-column="75" selection-end-line="38" selection-end-column="75" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -68,11 +66,20 @@
       <file leaf-file-name="motor_test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/python/robot/motor_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-770">
-              <caret line="100" column="34" selection-start-line="100" selection-start-column="34" selection-end-line="100" selection-end-column="34" />
+            <state relative-caret-position="556">
+              <caret line="153" column="9" selection-start-line="153" selection-start-column="9" selection-end-line="153" selection-end-column="9" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Robot.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/frc/team687/robot/Robot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="459">
+              <caret line="34" column="4" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -86,40 +93,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="state_space_plant.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_plant.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="state_space_observer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_observer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="15" selection-start-column="15" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="state_space_controller.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="26" column="43" selection-start-line="26" selection-start-column="43" selection-end-line="26" selection-end-column="43" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="state_space_gains.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_gains.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1462">
+            <state relative-caret-position="17">
               <caret line="1" column="8" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
             </state>
           </provider>
@@ -128,10 +105,34 @@
       <file leaf-file-name="state_space_utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
+            <state relative-caret-position="590">
               <caret line="114" column="50" selection-start-line="114" selection-start-column="50" selection-end-line="114" selection-end-column="50" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="state_space_controller.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="34" selection-start-line="34" selection-end-line="34" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ss_sim.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/ss_sim.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="539">
+              <caret line="68" selection-start-line="68" selection-end-line="68" />
+              <folding>
+                <element signature="e#0#77#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -671,7 +672,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/python/utilities/state_space_gains_writer.py" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team687/robot/constants/test.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team687/utilities/Controls.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team687/utilities/StateSpacePlant.java" />
@@ -706,7 +706,6 @@
         <option value="$PROJECT_DIR$/src/main/python/__init__.py" />
         <option value="$PROJECT_DIR$/src/main/python/robot/__init__.py" />
         <option value="$PROJECT_DIR$/run_py.cmd" />
-        <option value="$PROJECT_DIR$/src/main/python/robot/write_gains.py" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team687/utilities/statespace/ControllerSubsystem.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team687/robot/subsystems/TestMotor.java" />
@@ -716,11 +715,13 @@
         <option value="$PROJECT_DIR$/src/main/python/utilities/state_space_observer.py" />
         <option value="$PROJECT_DIR$/src/main/python/utilities/state_space_controller.py" />
         <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_plant.py" />
-        <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/gains_writer.py" />
         <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_observer.py" />
         <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_gains.py" />
-        <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py" />
         <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_utils.py" />
+        <option value="$PROJECT_DIR$/src/main/python/robot/write_gains.py" />
+        <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/gains_writer.py" />
+        <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py" />
+        <option value="$PROJECT_DIR$/src/main/python/utilities/state_space/ss_sim.py" />
         <option value="$PROJECT_DIR$/src/main/python/robot/motor_test.py" />
       </list>
     </option>
@@ -743,8 +744,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -775,27 +777,7 @@
               <item name="StateSpaceTest" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="team687" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="StateSpaceTest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="StateSpaceTest" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="team687" type="462c0819:PsiDirectoryNode" />
-              <item name="utilities" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="StateSpaceTest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="StateSpaceTest" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="team687" type="462c0819:PsiDirectoryNode" />
-              <item name="utilities" type="462c0819:PsiDirectoryNode" />
-              <item name="statespace" type="462c0819:PsiDirectoryNode" />
+              <item name="python" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="StateSpaceTest" type="b2602c69:ProjectViewProjectNode" />
@@ -803,6 +785,7 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="python" type="462c0819:PsiDirectoryNode" />
+              <item name="robot" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="StateSpaceTest" type="b2602c69:ProjectViewProjectNode" />
@@ -831,7 +814,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1131,13 +1113,6 @@
     <select />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1386">
-          <caret line="66" column="45" selection-start-line="66" selection-start-column="45" selection-end-line="66" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team687/robot/subsystems/TestMotor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="901">
@@ -1243,8 +1218,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team687/robot/OI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="16" column="70" selection-start-line="16" selection-start-column="70" selection-end-line="16" selection-end-column="70" />
+        <state relative-caret-position="272">
+          <caret line="17" column="5" selection-start-line="17" selection-start-column="5" selection-end-line="17" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -1264,8 +1239,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team687/robot/Robot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
+        <state relative-caret-position="459">
+          <caret line="34" column="4" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -1347,34 +1322,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/gains_writer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/python/robot/write_gains.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/python/utilities/motor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret column="11" selection-start-column="11" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="26" column="43" selection-start-line="26" selection-start-column="43" selection-end-line="26" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1392,17 +1343,57 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_gains.py">
+    <entry file="file://$PROJECT_DIR$/src/main/python/robot/write_gains.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1462">
-          <caret line="1" column="8" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
+        <state relative-caret-position="272">
+          <caret line="16" column="52" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
+        <state relative-caret-position="590">
           <caret line="114" column="50" selection-start-line="114" selection-start-column="50" selection-end-line="114" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/state_space_gains.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="8" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/ss_sim.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="539">
+          <caret line="68" selection-start-line="68" selection-end-line="68" />
+          <folding>
+            <element signature="e#0#77#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/python/utilities/state_space/gains_writer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-294">
+          <caret line="38" column="75" selection-start-line="38" selection-start-column="75" selection-end-line="38" selection-end-column="75" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -1411,8 +1402,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/python/robot/motor_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-770">
-          <caret line="100" column="34" selection-start-line="100" selection-start-column="34" selection-end-line="100" selection-end-column="34" />
+        <state relative-caret-position="556">
+          <caret line="153" column="9" selection-start-line="153" selection-start-column="9" selection-end-line="153" selection-end-column="9" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
