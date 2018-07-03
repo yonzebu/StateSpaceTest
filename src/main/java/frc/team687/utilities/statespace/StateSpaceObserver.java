@@ -27,12 +27,13 @@ public class StateSpaceObserver {
     public Matrix newStateEstimate(Matrix u, Matrix y) {
         StateSpaceGains gains = this.m_gains[m_selectedGainsIndex];
 
+        /*
+        x_hat[k+1] = Ax_hat[k] + Bu[k] + L(y[k] - y_hat[k])
+        x_hat[k+1] = Ax_hat[k] + Bu[k] + L(y[k] - C(x_hat[k]))
+        x_hat[k+1] = Ax_hat[k] + Bu[k] + Ly[k] - LCx_hat[k]
+        x_hat[k+1] = (A - LC)x_hat[k] + Bu[k] + Ly[k]
+        */
 
-        /* x_hat[k+1] = Ax_hat[k] + Bu[k] + L(y[k] - y_hat[k])
-           x_hat[k+1] = Ax_hat[k] + Bu[k] + L(y[k] - C(x_hat[k]))
-           x_hat[k+1] = Ax_hat[k] + Bu[k] + Ly[k] - LCx_hat[k]
-           x_hat[k+1] = (A - LC)x_hat[k] + Bu[k] + Ly[k]
-         */
         // (A - LC)x_hat[k]
         Matrix xHatTerm = gains.A.minus(gains.L.times(gains.C)).times(this.m_xHat);
         // Bu[k]

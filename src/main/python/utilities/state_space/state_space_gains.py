@@ -1,5 +1,5 @@
 import numpy as np
-from utilities.state_space_utils import check_validity, observability, controllability
+from utilities.state_space.state_space_utils import check_validity, observability, controllability
 
 
 class Gains(object):

@@ -113,7 +113,6 @@ def place_poles(A, B, poles):
 
     assert len(poles) == A.shape[0], 'The number of poles must equal the number of states'
     result = scipy.signal.place_poles(A, B, poles)
-    print(result.gain_matrix)
 
     for requested, computed in zip(result.requested_poles, result.computed_poles):
         if abs(requested - computed) >= 1e-8:
@@ -173,7 +172,7 @@ def c2d(A, B, Q_noise, R_noise, dt: float):
     n = A.shape[0]
     m = B.shape[1]
 
-    M = np.zeros((n+m, n+m))
+    M = np.asmatrix(np.zeros((n+m, n+m)))
     M[:n, :n] = A
     M[:n, n:n+m] = B
     N = np.asmatrix(scipy.linalg.expm(M * dt))
@@ -187,10 +186,10 @@ def c2d(A, B, Q_noise, R_noise, dt: float):
     F[:n, n:n+n] = Q_noise
     G = np.asmatrix(scipy.linalg.expm(F * dt))
 
-    Q_noise_discrete = A * G[:n, n:n+n]
+    Q_noise_discrete = A_discrete * G[:n, n:n+n]
     R_noise_discrete = R_noise / dt
 
-    return [A_discrete, B_discrete, Q_noise_discrete, R_noise_discrete]
+    return A_discrete, B_discrete, Q_noise_discrete, R_noise_discrete
 
 
 def clqr(A, B, Q_weight, R_weight):

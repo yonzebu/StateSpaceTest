@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team687.robot.constants.MotorGains;
 import frc.team687.robot.constants.TestMotorConstants;
 
-public class ControllerSubsystem extends Subsystem {
+abstract public class ControllerSubsystem extends Subsystem {
 
     protected Matrix m_currentOutput;
 
@@ -40,10 +40,6 @@ public class ControllerSubsystem extends Subsystem {
         Matrix estimatedState = this.m_observer.newStateEstimate(this.m_currentOutput, measurement);
         this.m_currentOutput = this.m_controller.getBoundedOutput(reference, estimatedState);
         return this.m_currentOutput;
-    }
-
-    @Override
-    protected void initDefaultCommand() {
     }
 
 }

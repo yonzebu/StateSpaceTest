@@ -39,12 +39,13 @@ public class StateSpaceController {
     public Matrix getReferenceTrackingOutput(Matrix reference, Matrix estimatedState) {
         StateSpaceGains currentGains = this.m_gains[this.m_selectedGainsIndex];
 
-        Matrix ReferenceInput = currentGains.N.times(reference);
+        Matrix referenceInput = currentGains.N.times(reference);
+
 
         Matrix controlLawInput = currentGains.K.times(estimatedState);
 
         // u = -K*x + N*r
-        controlLawInput.plusEquals(ReferenceInput);
+        referenceInput.minusEquals(controlLawInput);
         return controlLawInput;
     }
 

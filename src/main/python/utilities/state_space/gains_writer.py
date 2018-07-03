@@ -1,5 +1,5 @@
 import numpy as np
-from utilities.state_space_gains import GainsList, StateSpaceGains, ContinuousGains
+from utilities.state_space.state_space_gains import GainsList, StateSpaceGains, ContinuousGains
 
 
 def numpy_to_jama_matrix(np_matrix):

@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/utilities" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/robot" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.5 (StateSpaceTest)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.5" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

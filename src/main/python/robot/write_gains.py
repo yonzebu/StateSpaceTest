@@ -1,6 +1,3 @@
-from utilities.gains_writer import GainsWriter
-from robot import motor_test
-
 """
 This Python script is run before Java is compiled, so any constants or such that need to be generated via Python
 should be generated here
