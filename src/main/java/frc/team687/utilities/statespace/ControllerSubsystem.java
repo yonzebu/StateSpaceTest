@@ -2,8 +2,6 @@ package frc.team687.utilities.statespace;
 
 import Jama.Matrix;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team687.robot.constants.MotorGains;
-import frc.team687.robot.constants.TestMotorConstants;
 
 abstract public class ControllerSubsystem extends Subsystem {
 
