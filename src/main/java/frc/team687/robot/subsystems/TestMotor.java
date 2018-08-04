@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team687.robot.commands.TrackReference;
 import frc.team687.robot.constants.TestMotorConstants;
 import frc.team687.utilities.statespace.ControllerSubsystem;
@@ -64,7 +65,12 @@ public class TestMotor extends ControllerSubsystem {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new TrackReference(TestMotorConstants.kEquilibriumGoal));
+        //setDefaultCommand(new TrackReference(TestMotorConstants.kEquilibriumGoal));
+    }
+
+    public void reportToSmartDashboard() {
+        SmartDashboard.putNumber("Position", getEncoderPositionTicks());
+        SmartDashboard.putNumber("Veclocity", getEncoderSpeedTicks());
     }
 
 }

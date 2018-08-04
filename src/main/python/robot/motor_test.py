@@ -10,7 +10,7 @@ from utilities.state_space.ss_sim import StateSpaceControlSim
 def create_gains():
 
     # Motor constants
-    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._775PRO.value
+    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._BAG.value
 
     # torque / Kt = I-stall, so Kt = torque / I-stall in N-m / A
     Kt = stall_torque / stall_current
@@ -23,10 +23,10 @@ def create_gains():
     d = stall_current * Kt / free_speed
 
     # Constants for the system the motor is used in
-    # Gear ratio (torque-out / torque-in), assumed to be one for simplicity
+    # Gear ratio (torque-out / torque-in)
     GR = 81.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
-    MoI = .005
+    MoI = .004
     # Efficiency of the system is the ratio between actual output torque and expected output torque
     efficiency = 1.
 
