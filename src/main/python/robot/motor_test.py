@@ -20,11 +20,12 @@ def create_gains():
     Kv = free_speed / (battery_voltage - free_current * R)
     # Damping coefficient, determines torque caused by given speed, sort of
     # Probably not using this, actually
-    d = stall_current * Kt / free_speed
+    # Although I'm using it right now I think
+    d = free_current * Kt / free_speed
 
     # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in)
-    GR = 81.
+    GR = 3.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
     MoI = .004
     # Efficiency of the system is the ratio between actual output torque and expected output torque
@@ -70,7 +71,7 @@ def create_gains():
         [1.e-3]
     ])
 
-    dt = .02
+    dt = .05
 
     A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
 
@@ -131,12 +132,16 @@ def reference_calculator(time: float):
     return np.zeros((1, 1)) if time < 4 else np.asmatrix([[-4096]])
 
 
+def voltage_calculator(time: float):
+    return np.zeros((1, 1)) if time < 0 else np.asmatrix([[12]])
+
+
 def sim():
     gains_list, u_max, u_min = create_gains()
     gains = gains_list.get_gains(0)
     x_initial = np.asmatrix([
-        [10],
-        [0]
+        [0.],
+        [0.]
     ])
     x_hat_initial = x_initial
     u_initial = np.zeros((1, 1))
@@ -144,10 +149,12 @@ def sim():
     sim = StateSpaceControlSim(gains, x_hat_initial=x_hat_initial, u_initial=u_initial, x_initial=x_initial,
                                u_max=u_max, u_min=u_min)
 
-    plot_settings = (True, False, True, False, True, False)
+    # Options: theta, theta_dot, u, y (angle), theta_hat, theta_hat_dot
+    # Currently selected: theta, u
+    plot_settings = (False, True, True, False, False, False)
     duration = 10.
 
-    sim.plot(duration=duration, plot_setttings=plot_settings, reference_calculator=reference_calculator)
+    sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
 
 
 if __name__ == '__main__':
