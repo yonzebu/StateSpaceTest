@@ -5,7 +5,7 @@ from utilities.motor import MotorType
 from utilities.state_space.ss_sim import StateSpaceControlSim
 
 
-# This is a theoretical state space model for a 775pro with velocity control
+# This is a theoretical state space model for a BAG with velocity control
 # Adding position control, however, would be trivial
 def create_gains():
 
@@ -63,8 +63,8 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [0e-2, 0],
-        [0, 0e-2]
+        [1.e-2, 0],
+        [0, 1.e-3]
     ])
 
     R_noise = np.asmatrix([
@@ -109,6 +109,8 @@ def create_gains():
     # Kalman gains, optimal matrix for estimating and stuff
     L_d = discrete_kalman(A_d, C, Q_d, R_d)
 
+    print(L_d)
+
     # Feedforward matrix
     Kff = np.asmatrix(feedforward_gains(B_d))
 
@@ -119,7 +121,7 @@ def create_gains():
     N = np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A_d - B_d*K_d - np.identity(n)) * B_d))
 
     u_max = np.asmatrix([
-        [battery_voltage * 5./6.]
+        [battery_voltage * 3./6.]
     ])
     u_min = -u_max
 

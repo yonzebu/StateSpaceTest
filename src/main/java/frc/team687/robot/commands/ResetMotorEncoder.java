@@ -1,6 +1,7 @@
 package frc.team687.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team687.robot.Robot;
 import frc.team687.robot.constants.TestMotorConstants;
 
@@ -15,11 +16,13 @@ public class ResetMotorEncoder extends Command{
 
     protected void initialize() {
         Robot.motor.setVoltage(0);
+
+        SmartDashboard.putString("Current command", "ResetMotorEncoder");
     }
 
     protected void execute() {
         Robot.motor.resetEncoder();
-        if (Robot.motor.getEncoderPositionTicks() == 0) {
+        if (Robot.motor.getEncoderPositionTicks() == 1000) {
             this.m_counter++;
         } else {
             this.m_counter = 0;

@@ -1,11 +1,10 @@
 package frc.team687.robot.commands;
 
 import Jama.Matrix;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team687.robot.Robot;
 import frc.team687.robot.constants.TestMotorConstants;
-import frc.team687.robot.subsystems.TestMotor;
 
 public class TrackReference extends Command {
 
@@ -24,11 +23,13 @@ public class TrackReference extends Command {
 
     protected void initialize() {
         Robot.motor.setGoal(this.m_reference);
+        SmartDashboard.putString("Current command", "Track Reference");
 //        m_ssRunner.startPeriodic(Robot.motor.gains().dt);
     }
 
     protected void execute() {
         Robot.motor.trackGoal();
+        // Robot.motor.setVoltage(this.m_reference.get(0,0));
     }
 
     @Override

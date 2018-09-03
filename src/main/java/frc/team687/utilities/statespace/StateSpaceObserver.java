@@ -33,13 +33,22 @@ public class StateSpaceObserver {
         x_hat[k+1] = Ax_hat[k] + Bu[k] + Ly[k] - LCx_hat[k]
         x_hat[k+1] = (A - LC)x_hat[k] + Bu[k] + Ly[k]
         */
+        
+        System.out.println("y");
+        JamaUtils.printMatrix(y);
 
         // (A - LC)x_hat[k]
         Matrix xHatTerm = gains.A.minus(gains.L.times(gains.C)).times(this.m_xHat);
+        System.out.println("xHatTerm");
+        JamaUtils.printMatrix(xHatTerm);
         // Bu[k]
         Matrix Bu = gains.B.times(u);
+        System.out.println("Bu");
+        JamaUtils.printMatrix(Bu);
         // Ly[k]
         Matrix Ly = gains.L.times(y);
+        System.out.println("Ly");
+        JamaUtils.printMatrix(Ly);
 
         this.m_xHat = xHatTerm.plus(Bu.plus(Ly));
         return this.m_xHat;

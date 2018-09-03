@@ -46,6 +46,8 @@ public class StateSpaceController {
 
         // u = -K*x + N*r
         referenceInput.minusEquals(controlLawInput);
+        JamaUtils.printMatrix(estimatedState);
+
         return controlLawInput;
     }
 
