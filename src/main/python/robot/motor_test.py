@@ -63,15 +63,15 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [1.e-2, 0],
-        [0, 1.e-3]
+        [1.e2, 0],
+        [0, 1.e3]
     ])
 
     R_noise = np.asmatrix([
         [1.e-3]
     ])
 
-    dt = .05
+    dt = .02
 
     A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
 
@@ -98,7 +98,7 @@ def create_gains():
     # This was an arbitrary choice, and I'm going to actually have to look into optimal pole placement and such
     # Maybe also matlab/octave state space sim stuff
     # Pole placement actually doesn't seem to quite be working for velocity-controlled motors
-    desired_poles = [.4-.1j, .4+.1j]
+    desired_poles = [-.4-.1j, -.4+.1j]
 
     # Pole placement
     K_d = place_poles(A_d, B_d, desired_poles)
@@ -109,7 +109,7 @@ def create_gains():
     # Kalman gains, optimal matrix for estimating and stuff
     L_d = discrete_kalman(A_d, C, Q_d, R_d)
 
-    print(L_d)
+    # print(L_d)
 
     # Feedforward matrix
     Kff = np.asmatrix(feedforward_gains(B_d))
@@ -131,7 +131,7 @@ def create_gains():
 
 
 def reference_calculator(time: float):
-    return np.zeros((1, 1)) if time < 4 else np.asmatrix([[-4096]])
+    return np.zeros((1, 1)) if time < 4 else np.asmatrix([[0.]])
 
 
 def voltage_calculator(time: float):
@@ -142,7 +142,7 @@ def sim():
     gains_list, u_max, u_min = create_gains()
     gains = gains_list.get_gains(0)
     x_initial = np.asmatrix([
-        [0.],
+        [1000.],
         [0.]
     ])
     x_hat_initial = x_initial
@@ -153,10 +153,10 @@ def sim():
 
     # Options: theta, theta_dot, u, y (angle), theta_hat, theta_hat_dot
     # Currently selected: theta, u
-    plot_settings = (False, True, True, False, False, False)
+    plot_settings = (True, False, False, False, False, False)
     duration = 10.
 
-    sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
+    sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator)
 
 
 if __name__ == '__main__':

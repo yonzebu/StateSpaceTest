@@ -45,12 +45,12 @@ public class TestMotor extends ControllerSubsystem{
         
     }
 
-    public void setPercentOutput(double percentOutput) {
+    private void setPercentOutput(double percentOutput) {
         this.m_motor.set(ControlMode.PercentOutput, percentOutput);
     }
 
-    public void setVoltage(double voltage) {
-        this.m_motor.set(ControlMode.PercentOutput, voltage / this.m_motor.getBusVoltage());
+    private void setVoltage(double voltage) {
+        this.setPercentOutput(voltage / this.m_motor.getBusVoltage());
     }
 
     public double getEncoderSpeedTicks() {
@@ -80,8 +80,13 @@ public class TestMotor extends ControllerSubsystem{
     public void trackGoal() {
         Matrix measurement = new Matrix(new double[][]{{this.getEncoderPositionTicks()}});
         double voltageToSet = this.trackReference(this.m_currentGoal, measurement).get(0,0);
-        System.out.println("voltage being set");
-        System.out.println(voltageToSet);
+        this.setVoltage(voltageToSet);
+    }
+
+    public void setInput(Matrix input) {
+        Matrix measurement = new Matrix(new double[][]{{this.getEncoderPositionTicks()}});
+        this.updateWithInput(input, measurement);
+        double voltageToSet = input.get(0, 0);
         this.setVoltage(voltageToSet);
     }
 

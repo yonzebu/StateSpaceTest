@@ -41,6 +41,11 @@ abstract public class ControllerSubsystem extends Subsystem {
         return this.m_currentOutput;
     }
 
+    protected void updateWithInput(Matrix input, Matrix measurement) {
+        Matrix estimatedState = this.m_observer.newStateEstimate(this.m_currentOutput, measurement);
+        this.m_currentOutput = input;
+    }
+
 
 
 }

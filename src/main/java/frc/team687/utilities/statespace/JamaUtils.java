@@ -49,6 +49,10 @@ public class JamaUtils {
         }
     }
 
+    public static Matrix matrixFromDouble(double number) {
+        return new Matrix(new double[][] {{ number }});
+    }
+
     // Creates an identity matrix using the dimensions of N
     public static Matrix identity(Matrix N) {
         assert isSquare(N) : "Matrix must be square to create identity matrix";
