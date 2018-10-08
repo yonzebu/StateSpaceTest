@@ -3,3 +3,6 @@ build
 .gradle
 *.ipr
 *.iml
+bin/
+
+\.settings/
