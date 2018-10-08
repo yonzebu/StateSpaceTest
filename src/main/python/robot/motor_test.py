@@ -10,7 +10,7 @@ from utilities.state_space.ss_sim import StateSpaceControlSim
 def create_gains():
 
     # Motor constants
-    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._BAG.value
+    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._PRO775.value
 
     # torque / Kt = I-stall, so Kt = torque / I-stall in N-m / A
     Kt = stall_torque / stall_current
@@ -63,8 +63,8 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [1.e2, 0],
-        [0, 1.e3]
+        [0, 0],
+        [0, 1.e-2]
     ])
 
     R_noise = np.asmatrix([
@@ -81,9 +81,10 @@ def create_gains():
     # and to use 1 / (acceptable error)^2 for each diagonal entry, each of which correspond to one state variable.
     # In this case, I decided acceptable velocity error was .01 rad/s and acceptable position error was .01 rad, so
     # the entries in Q_weight are calculated accordingly.
+    p = 0.1
     Q_weight = np.asmatrix([
-        [(1. / 1.e-3)**2, 0],
-        [0, (1. / 1.e-1)**2]
+        [(p / 1.e-2)**2, 0],
+        [0, (p / 1.e-1)**2]
     ])
 
     # LQR weight matrix R, a diagonal matrix similar to Q, except with regards to the inputs, rather than states
@@ -92,18 +93,18 @@ def create_gains():
     # is battery voltage (limited slightly in this case in case of mechanical inefficiency), the entry in R_weight is
     # calculated accordingly
     R_weight = np.asmatrix([
-        [1. / ((battery_voltage * 5./6.) ** 2)]
+        [1. / ((battery_voltage * 0.5/6.) ** 2)]
     ])
 
     # This was an arbitrary choice, and I'm going to actually have to look into optimal pole placement and such
     # Maybe also matlab/octave state space sim stuff
     # Pole placement actually doesn't seem to quite be working for velocity-controlled motors
-    desired_poles = [-.4-.1j, -.4+.1j]
+    desired_poles = [.5 - 0.1j, .5 + 0.1j]
 
     # Pole placement
-    K_d = place_poles(A_d, B_d, desired_poles)
+    # K_d = place_poles(A_d, B_d, desired_poles)
     # K_d = np.asmatrix([[10.]])
-    # K_d = dlqr(A_d, B_d, Q_weight, R_weight)
+    K_d = dlqr(A_d, B_d, Q_weight, R_weight)
     # print(np.linalg.eigvals(A_d - (B_d * K_d)))
 
     # Kalman gains, optimal matrix for estimating and stuff
@@ -121,7 +122,7 @@ def create_gains():
     N = np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A_d - B_d*K_d - np.identity(n)) * B_d))
 
     u_max = np.asmatrix([
-        [battery_voltage * 3./6.]
+        [battery_voltage / 12.]
     ])
     u_min = -u_max
 
@@ -131,18 +132,29 @@ def create_gains():
 
 
 def reference_calculator(time: float):
-    return np.zeros((1, 1)) if time < 4 else np.asmatrix([[0.]])
+    if time < 4:
+        return np.zeros((2, 1))
+    elif time < 8:
+        return np.asmatrix(
+            [[3.14],
+            [0.]]
+            )
+    else:
+        return np.asmatrix(
+            [[-3.14],
+            [0.]]
+            )
 
 
 def voltage_calculator(time: float):
-    return np.zeros((1, 1)) if time < 0 else np.asmatrix([[12]])
+    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[12.]])
 
 
 def sim():
     gains_list, u_max, u_min = create_gains()
     gains = gains_list.get_gains(0)
     x_initial = np.asmatrix([
-        [1000.],
+        [-3.14],
         [0.]
     ])
     x_hat_initial = x_initial
@@ -152,8 +164,8 @@ def sim():
                                u_max=u_max, u_min=u_min)
 
     # Options: theta, theta_dot, u, y (angle), theta_hat, theta_hat_dot
-    # Currently selected: theta, u
-    plot_settings = (True, False, False, False, False, False)
+    # Currently selected: theta, theta_hat
+    plot_settings = (True, False, False, False, True, False)
     duration = 10.
 
     sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator)

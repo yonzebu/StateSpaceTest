@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team687.robot.Robot;
 import frc.team687.robot.constants.TestMotorConstants;
+import frc.team687.utilities.statespace.InputCalculator;
 import frc.team687.utilities.statespace.JamaUtils;
 
 public class SetInputLambda extends Command{

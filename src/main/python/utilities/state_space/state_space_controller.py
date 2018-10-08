@@ -27,7 +27,7 @@ class StateSpaceController(object):
     def update(self, r, x_hat):
         gains = self.current_gains
 
-        self.u = -gains.K * x_hat + gains.N * r
+        self.u = gains.K * (r - x_hat)
 
         return self.u
 

@@ -39,15 +39,10 @@ public class StateSpaceController {
     public Matrix getReferenceTrackingOutput(Matrix reference, Matrix estimatedState) {
         StateSpaceGains currentGains = this.m_gains[this.m_selectedGainsIndex];
 
-        Matrix referenceInput = currentGains.N.times(reference);
 
+        Matrix controlLawInput = currentGains.K.times(reference.minus(estimatedState)).times(-1);
 
-        Matrix controlLawInput = currentGains.K.times(estimatedState);
-
-        // u = -K*x + N*r
-        referenceInput.minusEquals(controlLawInput);
-        JamaUtils.printMatrix(estimatedState);
-
+        // u = -K*(r-x)
         return controlLawInput;
     }
 

@@ -54,4 +54,8 @@ public class StateSpaceObserver {
         return this.m_xHat;
     }
 
+    public Matrix getCurrentStateEstimate() {
+        return this.m_xHat;
+    }
+
 }

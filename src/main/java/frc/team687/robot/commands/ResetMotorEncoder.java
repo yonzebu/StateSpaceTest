@@ -23,7 +23,7 @@ public class ResetMotorEncoder extends Command{
 
     protected void execute() {
         Robot.motor.resetEncoder();
-        if (Robot.motor.getEncoderPositionTicks() == 1000) {
+        if (Robot.motor.getEncoderPositionTicks() == 0) {
             this.m_counter++;
         } else {
             this.m_counter = 0;
@@ -37,7 +37,7 @@ public class ResetMotorEncoder extends Command{
 
     // Called once after isFinished returns true
     protected void end() {
-        Robot.motor.setGoal(TestMotorConstants.kEquilibriumGoal);
+        // Robot.motor.setGoal(TestMotorConstants.kEquilibriumGoal);
     }
 
     // Called when another command which requires one or more of the same

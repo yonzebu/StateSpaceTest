@@ -6,24 +6,27 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import Jama.Matrix;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import Jama.Matrix;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team687.robot.constants.MotorGains;
 import frc.team687.robot.constants.TestMotorConstants;
 import frc.team687.utilities.statespace.ControllerSubsystem;
+import frc.team687.utilities.statespace.NonlinearCompensator;
 import frc.team687.utilities.statespace.JamaUtils;
-import frc.team687.robot.constants.MotorGains;
 
 public class TestMotor extends ControllerSubsystem{
 
     private TalonSRX m_motor;
 
     private Matrix m_currentGoal;
+    private NonlinearCompensator m_nonlinearCompensator;
 
     private String m_filePath1 = "/media/sda1/logs/";
     private String m_filePath2 = "/home/lvuser/logs/";
@@ -36,12 +39,16 @@ public class TestMotor extends ControllerSubsystem{
         super(MotorGains.kMotorGains, MotorGains.U_min, MotorGains.U_max, TestMotorConstants.kInitialState,
                 new Matrix(1,1), TestMotorConstants.kGainsIndex);
 
-        this.m_motor = new TalonSRX(7);
+        this.m_motor = new TalonSRX(1);
 
         this.m_motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-        this.m_motor.setSensorPhase(false);
+        this.m_motor.setSensorPhase(true);
         this.m_motor.setInverted(false);
         this.m_motor.setNeutralMode(NeutralMode.Coast);
+
+        this.m_nonlinearCompensator = (x_hat) -> JamaUtils.matrixFromDouble(0);
+
+        super.setInverted(true);
         
     }
 
@@ -51,6 +58,11 @@ public class TestMotor extends ControllerSubsystem{
 
     private void setVoltage(double voltage) {
         this.setPercentOutput(voltage / this.m_motor.getBusVoltage());
+    }
+
+    private void setVoltageWithCompensator(double voltage) {
+        this.m_motor.set(ControlMode.PercentOutput, voltage / this.m_motor.getBusVoltage(), 
+        DemandType.ArbitraryFeedForward, this.m_nonlinearCompensator.operation(this.getXHat()).get(0, 0));
     }
 
     public double getEncoderSpeedTicks() {
@@ -70,7 +82,11 @@ public class TestMotor extends ControllerSubsystem{
     }
 
     public void resetEncoder() {
-        this.m_motor.setSelectedSensorPosition(1000, 0, 0);
+        this.m_motor.setSelectedSensorPosition(0, 0, 0);
+    }
+
+    public void configNonlinearCompensator(NonlinearCompensator nonlinearCompensator) {
+        m_nonlinearCompensator = nonlinearCompensator;
     }
 
     public void setGoal(Matrix goal) {
@@ -92,13 +108,16 @@ public class TestMotor extends ControllerSubsystem{
 
     @Override
     protected void initDefaultCommand() {
-        //setDefaultCommand(new TrackReference(TestMotorConstants.kEquilibriumGoal));
+        // setDefaultCommand(new TrackReference(TestMotorConstants.kEquilibriumGoal));
         // setDefaultCommand(new TrackReference(TestMotorConstants.kDefaultGoal));
     }
 
     public void reportToSmartDashboard() {
         SmartDashboard.putNumber("Position", getEncoderPositionTicks());
         SmartDashboard.putNumber("Veclocity", getEncoderSpeedTicks());
+        SmartDashboard.putNumber("Current", getCurrent());
+        SmartDashboard.putNumber("Voltage", getVoltage());
+        SmartDashboard.putNumber("Angle?", getEncoderPositionTicks() * 6.28 / 4096);
     }
 
     public void startLog() {
@@ -108,10 +127,10 @@ public class TestMotor extends ControllerSubsystem{
         Path filePrefix = Paths.get("");
         if (logFolder1.exists() && logFolder1.isDirectory()) {
             filePrefix = Paths.get(logFolder1.toString(),
-                "2018_08_31_StateSpaceTesting");
+                "2018_10_06_StateSpaceTesting");
         } else if (logFolder2.exists() && logFolder2.isDirectory()) {
             filePrefix = Paths.get(logFolder2.toString(),
-                "2018_08_31_StateSpaceTesting");
+                "2018_10_06_StateSpaceTesting");
         } else {
             writeException = true;
         }
