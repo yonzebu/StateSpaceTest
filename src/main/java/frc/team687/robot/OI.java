@@ -22,7 +22,7 @@ public class OI {
 
         SmartDashboard.putData("Test controller from 0 to pi", new TrackReference(TestMotorConstants.kDefaultGoal));
         SmartDashboard.putData("Reset Encoder", new ResetMotorEncoder());
-        InputCalculator inputCalculator = (t) -> JamaUtils.matrixFromDouble(1.);
+        InputCalculator inputCalculator = (t) -> JamaUtils.matrixFromDouble(12.);
         SmartDashboard.putData("12 Volt input", new SetInputLambda(inputCalculator));
     }
 }

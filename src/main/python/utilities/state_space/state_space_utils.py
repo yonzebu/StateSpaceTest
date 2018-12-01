@@ -301,13 +301,17 @@ def tracking_gains_c(A, B, C, K):
     return np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A - B*K) * B))
 
 
-def feedforward_gains(B):
+def feedforward_gains(B, Q=None, R=None):
     """
     Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k])
     uff = pinv(B) * (x[k+1] - A*x[k]), so Kff = pinv(B)
     According to 1678 and 971, there's an LQR-weighted solution or something like that, but I'm averse to implementing
     things that I haven't seen a mathematical background for.
     """
-
-    return np.linalg.pinv(B)
+    if Q is None:
+        return np.linalg.pinv(B)
+    elif Q is not None and R is None:
+        return np.linalg.inv(B.T * Q * B) * B.T * Q
+    else:
+        return np.linalg.inv((B.T * Q * B) + R) * B.T * Q
 

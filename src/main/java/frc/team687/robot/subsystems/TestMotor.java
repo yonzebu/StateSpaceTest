@@ -15,10 +15,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import Jama.Matrix;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team687.robot.constants.FlywheelGains;
 import frc.team687.robot.constants.MotorGains;
 import frc.team687.robot.constants.TestMotorConstants;
 import frc.team687.utilities.statespace.ControllerSubsystem;
 import frc.team687.utilities.statespace.NonlinearCompensator;
+import frc.team687.utilities.statespace.StateSpaceGains;
 import frc.team687.utilities.statespace.JamaUtils;
 
 public class TestMotor extends ControllerSubsystem{
@@ -36,10 +38,11 @@ public class TestMotor extends ControllerSubsystem{
     private double m_logStartTime = 0;
 
     public TestMotor() {
-        super(MotorGains.kMotorGains, MotorGains.U_min, MotorGains.U_max, TestMotorConstants.kInitialState,
+        super(MotorGains.kMotorGains, 
+                MotorGains.U_min, MotorGains.U_max, TestMotorConstants.kInitialState,
                 new Matrix(1,1), TestMotorConstants.kGainsIndex);
 
-        this.m_motor = new TalonSRX(1);
+        this.m_motor = new TalonSRX(0);
 
         this.m_motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
         this.m_motor.setSensorPhase(true);
@@ -63,6 +66,14 @@ public class TestMotor extends ControllerSubsystem{
     private void setVoltageWithCompensator(double voltage) {
         this.m_motor.set(ControlMode.PercentOutput, voltage / this.m_motor.getBusVoltage(), 
         DemandType.ArbitraryFeedForward, this.m_nonlinearCompensator.operation(this.getXHat()).get(0, 0));
+    }
+
+    public double getEstimatedAngle() {
+        return this.getXHat().get(0, 0);
+    }
+
+    public double getEstimatedSpeed() {
+        return this.getXHat().get(1, 0);
     }
 
     public double getEncoderSpeedTicks() {
@@ -127,10 +138,10 @@ public class TestMotor extends ControllerSubsystem{
         Path filePrefix = Paths.get("");
         if (logFolder1.exists() && logFolder1.isDirectory()) {
             filePrefix = Paths.get(logFolder1.toString(),
-                "2018_10_06_StateSpaceTesting");
+                "2018_11_16_StateSpaceTesting_InertiaWheel");
         } else if (logFolder2.exists() && logFolder2.isDirectory()) {
             filePrefix = Paths.get(logFolder2.toString(),
-                "2018_10_06_StateSpaceTesting");
+                "2018_11_16_StateSpaceTesting_InertiaWheel");
         } else {
             writeException = true;
         }
@@ -150,7 +161,8 @@ public class TestMotor extends ControllerSubsystem{
             }
             try {
                 m_writer = new FileWriter(m_file);
-                m_writer.append("Time,Position,Velocity,Voltage,Current\n");
+                m_writer.append("Time,Position,Velocity,Voltage,Current," + 
+                "EstimatedPosition,EstimatedSpeed\n");
                 m_logStartTime = Timer.getFPGATimestamp();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -175,8 +187,8 @@ public class TestMotor extends ControllerSubsystem{
                 double timestamp = Timer.getFPGATimestamp() - m_logStartTime;
                 m_writer.append(String.valueOf(timestamp) + ","
                     + String.valueOf(getEncoderPositionTicks()) + "," + String.valueOf(getEncoderSpeedTicks()) + ","
-                    + String.valueOf(getVoltage()) + ","
-                    + String.valueOf(getCurrent()) + "\n");
+                    + String.valueOf(getVoltage()) + "," + String.valueOf(getCurrent()) + "," 
+                    + String.valueOf(getEstimatedAngle()) + "," + String.valueOf(getEstimatedSpeed()) + "\n");
                 m_writer.flush();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -63,7 +63,9 @@ task build_matrices(type:Exec) {
 task sim_stuff(type:Exec) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)){
         commandLine 'cmd', '/C', '.\\run_py.cmd', '.\\src\\main\\python\\robot\\motor_test.py'
+        // commandLine 'cmd', '/C', '.\\run_py.cmd', '.\\src\\main\\python\\robot\\flywheel_test.py'
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
-        commandLine 'bash', './run_py.sh', './src/main/python/robot/motor_test.py'
+        // commandLine 'bash', './run_py.sh', './src/main/python/robot/motor_test.py'
+        commandLine 'bash', './run_py.sh', './src/main/python/robot/flywheel_test.py'
     }
 }

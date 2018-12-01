@@ -5,7 +5,7 @@ from utilities.motor import MotorType
 from utilities.state_space.ss_sim import StateSpaceControlSim
 
 
-# This is a theoretical state space model for a 775pro with velocity control
+# This is a theoretical state space model for a BAG with velocity control
 # Adding position control, however, would be trivial
 def create_gains():
 
@@ -45,17 +45,15 @@ def create_gains():
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
-        [0., 1.],
-        [0., k1]
+        [k1]
     ])
 
     B = np.asmatrix([
-        [0],
         [k2]
     ])
 
     C = np.asmatrix([
-        [pos_sensor_ratio, 0]
+        [sensor_ratio]
     ])
 
     D = np.zeros((1, 1))
@@ -63,15 +61,14 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [0, 0],
-        [0, 1.e-2]
+        [1.e-2]
     ])
 
     R_noise = np.asmatrix([
         [1.e-3]
     ])
 
-    dt = 0.02
+    dt = .02
 
     A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
 
@@ -83,8 +80,7 @@ def create_gains():
     # the entries in Q_weight are calculated accordingly.
     p = 0.1
     Q_weight = np.asmatrix([
-        [(p / 1.e-2)**2, 0],
-        [0, (p / 1.e-1)**2]
+        [(p / 1.e-1)**2]
     ])
 
     # LQR weight matrix R, a diagonal matrix similar to Q, except with regards to the inputs, rather than states
@@ -99,7 +95,7 @@ def create_gains():
     # This was an arbitrary choice, and I'm going to actually have to look into optimal pole placement and such
     # Maybe also matlab/octave state space sim stuff
     # Pole placement actually doesn't seem to quite be working for velocity-controlled motors
-    desired_poles = [.5 - 0.1j, .5 + 0.1j]
+    desired_poles = [.5]
 
     # Pole placement
     # K_d = place_poles(A_d, B_d, desired_poles)
@@ -126,23 +122,21 @@ def create_gains():
     ])
     u_min = -u_max
 
-    gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, N, u_min, u_max, dt))
+    gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, N, u_min, u_max, dt))
 
     return gains, u_max, u_min
 
 
 def reference_calculator(time: float):
     if time < 4:
-        return np.zeros((2, 1))
+        return np.zeros((1, 1))
     elif time < 8:
         return np.asmatrix(
-            [[3.14],
-            [0.]]
+            [[3.14]]
             )
     else:
         return np.asmatrix(
-            [[-3.14],
-            [0.]]
+            [[-3.14]]
             )
 
 
@@ -154,7 +148,6 @@ def sim():
     gains_list, u_max, u_min = create_gains()
     gains = gains_list.get_gains(0)
     x_initial = np.asmatrix([
-        [-3.14],
         [0.]
     ])
     x_hat_initial = x_initial
@@ -164,13 +157,13 @@ def sim():
     sim = StateSpaceControlSim(gains, x_hat_initial=x_hat_initial, u_initial=u_initial, x_initial=x_initial,
                                 r_initial=r_initial, u_max=u_max, u_min=u_min)
 
-    # Options: theta, theta_dot, u, y (angle), theta_hat, theta_hat_dot
+    # Options: theta_dot, u, y (angular velocity in talon units), theta_hat_dot
     # Currently selected: theta, theta_hat
-    plot_settings = (False, False, True, False, True, False)
+    plot_settings = (False, False, False, True)
     duration = 10.
 
-    sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
-    # sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
+    # sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
+    sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
 
 
 if __name__ == '__main__':
