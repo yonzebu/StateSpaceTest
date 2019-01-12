@@ -15,15 +15,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import Jama.Matrix;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team687.robot.constants.FlywheelGains;
 import frc.team687.robot.constants.MotorGains;
 import frc.team687.robot.constants.TestMotorConstants;
 import frc.team687.utilities.statespace.ControllerSubsystem;
-import frc.team687.utilities.statespace.NonlinearCompensator;
-import frc.team687.utilities.statespace.StateSpaceGains;
 import frc.team687.utilities.statespace.JamaUtils;
+import frc.team687.utilities.statespace.NonlinearCompensator;
 
-public class TestMotor extends ControllerSubsystem{
+public class TestMotor extends ControllerSubsystem {
 
     private TalonSRX m_motor;
 
