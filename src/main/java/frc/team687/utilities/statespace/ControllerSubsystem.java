@@ -60,5 +60,8 @@ abstract public class ControllerSubsystem extends Subsystem {
         return this.m_observer.getCurrentStateEstimate();
     }
 
+    protected void setXHat(Matrix xHat) {
+        this.m_observer.setXHat(xHat);
+    }
 
 }

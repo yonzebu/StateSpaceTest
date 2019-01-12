@@ -49,4 +49,8 @@ public class StateSpaceObserver {
         return this.m_xHat;
     }
 
+    public void setXHat(Matrix xHat) {
+        this.m_xHat = xHat;
+    }
+
 }

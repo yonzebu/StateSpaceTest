@@ -21,22 +21,28 @@ def create_gains():
     # Damping coefficient, determines torque caused by given speed, sort of
     # Probably not using this, actually
     # Although I'm using it right now I think
-    d = free_current * Kt / free_speed
+    # d = free_current * Kt / free_speed
 
     # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in)
-    GR = 36.
+    GR = 3.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
+    # MoI of aluminum flywheel
     MoI = 0.004
+    # Steel disk MoI is listed below this
+    # MoI = 0.0106
     # Efficiency of the system is the ratio between actual output torque and expected output torque
-    efficiency = 0.9
+    # Not currently using this
+    # efficiency = 1.
 
-    # k1 and k2, which determine the A and B matrices, are determined by solving the motor characterization equation
+    # back emf and voltage torque, which determine the A and B matrices, are determined by solving the motor characterization equation
     # for angular acceleration
-    k1 = -efficiency * GR * GR * ((Kt / (Kv * R * MoI)) + (d / MoI))
-    k2 = efficiency * Kt * GR / (R * MoI)
+    # back emf represents the effect of the back emf of the motor on angular acceleration
+    back_emf = -GR * GR * Kt / (Kv * R * MoI)
+    # voltage torque describes the effect of the voltage applied on the motor's angular acceleration
+    v_torque = Kt * GR / (R * MoI)
 
-    # Sensor ratio for CTRE Magnetic Encoders with Talon SRX's is 4096 ticks/rotation
+    # Sensor ratio for CTRE Magnetic Encoders with Talon SRXs is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
     # Sensor ratio converts internal state (rad/s) to sensor units (ticks / .1s)
     sensor_ratio = 4096. / (2. * math.pi * 10.)
@@ -45,11 +51,11 @@ def create_gains():
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
-        [k1]
+        [back_emf]
     ])
 
     B = np.asmatrix([
-        [k2]
+        [v_torque]
     ])
 
     C = np.asmatrix([
@@ -80,7 +86,7 @@ def create_gains():
     # the entries in Q_weight are calculated accordingly.
     p = 0.1
     Q_weight = np.asmatrix([
-        [(p / 1.e-1)**2]
+        [(p / 1.)**2]
     ])
 
     # LQR weight matrix R, a diagonal matrix similar to Q, except with regards to the inputs, rather than states
@@ -122,7 +128,7 @@ def create_gains():
     ])
     u_min = -u_max
 
-    gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, N, u_min, u_max, dt))
+    gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
 
     return gains, u_max, u_min
 
@@ -140,8 +146,8 @@ def reference_calculator(time: float):
             )
 
 
-def voltage_calculator(time: float):
-    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[12.]])
+def input_calculator(time: float):
+    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[1]])
 
 
 def sim():
@@ -158,12 +164,12 @@ def sim():
                                 r_initial=r_initial, u_max=u_max, u_min=u_min)
 
     # Options: theta_dot, u, y (angular velocity in talon units), theta_hat_dot
-    # Currently selected: theta, theta_hat
-    plot_settings = (False, False, False, True)
-    duration = 10.
+    # Currently selected: y
+    plot_settings = (False, False, True, False)
+    duration = 22.74
 
     # sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
-    sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
+    sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=input_calculator)
 
 
 if __name__ == '__main__':

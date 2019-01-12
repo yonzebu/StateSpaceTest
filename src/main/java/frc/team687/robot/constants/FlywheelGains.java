@@ -7,10 +7,10 @@ import frc.team687.utilities.statespace.StateSpaceGains;
 public class FlywheelGains {
 
     public static final Matrix A = new Matrix( new double[][]
-        {{0.12110428773226439}}
+        {{0.9839263001485526}}
     );
     public static final Matrix B = new Matrix( new double[][]
-        {{3.9904327331183826}}
+        {{0.8803480323820759}}
     );
     public static final Matrix C = new Matrix( new double[][]
         {{65.18986469044033}}
@@ -19,22 +19,19 @@ public class FlywheelGains {
         {{0.0}}
     );
     public static final Matrix Q_noise = new Matrix( new double[][]
-        {{4.667387842468647e-05}}
+        {{0.00019679387208189632}}
     );
     public static final Matrix R_noise = new Matrix( new double[][]
         {{0.05}}
     );
     public static final Matrix K = new Matrix( new double[][]
-        {{0.028556842066895335}}
+        {{0.07970320501091194}}
     );
     public static final Matrix L = new Matrix( new double[][]
-        {{0.0014845864571035278}}
+        {{0.014283628048590903}}
     );
     public static final Matrix Kff = new Matrix( new double[][]
-        {{0.2357916590789855}}
-    );
-    public static final Matrix N = new Matrix( new double[][]
-        {{-0.003816660315033393}}
+        {{0.008735776946698805}}
     );
     public static final Matrix U_min = new Matrix( new double[][]
         {{-1.0}}
@@ -45,7 +42,7 @@ public class FlywheelGains {
     public static final double dt = 0.02;
     
     public static StateSpaceGains kFlywheelGains = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
-                                                                K, L, Kff, N, dt); 
+                                                                K, L, Kff, dt); 
 
 }
             

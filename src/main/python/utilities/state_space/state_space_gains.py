@@ -9,7 +9,7 @@ class Gains(object):
 
 class StateSpaceGains(Gains):
 
-    def __init__(self, name: str, A, B, C, D, Q_noise, R_noise, K, L, Kff, N, u_min, u_max, dt: float):
+    def __init__(self, name: str, A, B, C, D, Q_noise, R_noise, K, L, Kff, u_min, u_max, dt: float):
         self.A = np.asmatrix(A)
         self.B = np.asmatrix(B)
         self.C = np.asmatrix(C)
@@ -21,7 +21,6 @@ class StateSpaceGains(Gains):
         self.K = np.asmatrix(K)
         self.L = np.asmatrix(L)
         self.Kff = np.asmatrix(Kff)
-        self.N = np.asmatrix(N)
 
         self.u_min = u_min
         self.u_max = u_max
@@ -42,7 +41,7 @@ class StateSpaceGains(Gains):
         return np.linalg.matrix_rank(observability(self.A, self.C)) == self.A.shape[0]
 
     def check_system_validity(self):
-        check_validity(self.A, self.B, self.C, self.D, self.Q_noise, self.R_noise, self.K, self.L, self.Kff, self.N)
+        check_validity(self.A, self.B, self.C, self.D, self.Q_noise, self.R_noise, self.K, self.L, self.Kff)
 
     def print_gains(self):
         print('A = ', '\n', self.A)
@@ -55,7 +54,6 @@ class StateSpaceGains(Gains):
         print('K = ', '\n', self.K)
         print('L = ', '\n', self.L)
         print('Kff = ', '\n', self.Kff)
-        print('N = ', '\n', self.N)
 
         print('u_min = ', '\n', self.u_min)
         print('u_max = ', '\n', self.u_max)

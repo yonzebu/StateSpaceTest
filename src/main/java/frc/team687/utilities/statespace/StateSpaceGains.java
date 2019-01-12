@@ -4,7 +4,7 @@ import Jama.Matrix;
 
 public class StateSpaceGains {
 
-    public final Matrix A, B, C, D, Q, R, K, L, Kff, N;
+    public final Matrix A, B, C, D, Q, R, K, L, Kff;
 
     public final double dt;
     public final int n, p, q;
@@ -34,8 +34,7 @@ public class StateSpaceGains {
 
     // This is used specifically for discrete state space constants
     public StateSpaceGains(Matrix A, Matrix B, Matrix C, Matrix D, Matrix Q,
-                           Matrix R, Matrix K, Matrix L, Matrix Kff, Matrix N,
-                           double dt) {
+                           Matrix R, Matrix K, Matrix L, Matrix Kff, double dt) {
         this.A = A;
         this.B = B;
         this.C = C;
@@ -47,7 +46,6 @@ public class StateSpaceGains {
         this.K = K;
         this.L = L;
         this.Kff = Kff;
-        this.N = N;
 
         this.dt = dt;
 
@@ -101,11 +99,6 @@ public class StateSpaceGains {
                 "Kff must have the same number of columns as there are states";
         assert this.Kff.getRowDimension() == this.p :
                 "Kff must have the same number of rows as there are inputs";
-
-        assert this.N.getRowDimension() == this.p :
-                "N must have the same number of rows as there are states";
-        assert this.N.getColumnDimension() == this.q :
-                "N must have the same number of columns as there are sensor inputs";
     }
 
 }

@@ -25,7 +25,7 @@ def create_gains():
 
     # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in)
-    GR = 36.
+    GR = 3.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
     MoI = 0.004
     # Efficiency of the system is the ratio between actual output torque and expected output torque
@@ -55,10 +55,11 @@ def create_gains():
     ])
 
     C = np.asmatrix([
-        [pos_sensor_ratio, 0]
+        [pos_sensor_ratio, 0],
+        [0, sensor_ratio]
     ])
 
-    D = np.zeros((1, 1))
+    D = np.zeros((2, 1))
 
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
@@ -68,7 +69,8 @@ def create_gains():
     ])
 
     R_noise = np.asmatrix([
-        [1.e-3]
+        [1.e-3, 0],
+        [0, 1.e-2]
     ])
 
     dt = 0.02
@@ -115,18 +117,12 @@ def create_gains():
     # Feedforward matrix
     Kff = np.asmatrix(feedforward_gains(B_d, Q_weight, R_weight))
 
-    # Reference-tracking matrix, used to track arbitrary step reference measurements
-    # Calculated in discrete time as N = inv( -C_d * inv(A_d - B_d*K - I) * B_d), where I is the identity matrix
-    # equivalent in dimension to A
-    n = A_d.shape[0]
-    N = np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A_d - B_d*K_d - np.identity(n)) * B_d))
-
     u_max = np.asmatrix([
         [battery_voltage / 12.]
     ])
     u_min = -u_max
 
-    gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, N, u_min, u_max, dt))
+    gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
 
     return gains, u_max, u_min
 
@@ -147,7 +143,7 @@ def reference_calculator(time: float):
 
 
 def voltage_calculator(time: float):
-    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[12.]])
+    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[1.]])
 
 
 def sim():
@@ -164,13 +160,13 @@ def sim():
     sim = StateSpaceControlSim(gains, x_hat_initial=x_hat_initial, u_initial=u_initial, x_initial=x_initial,
                                 r_initial=r_initial, u_max=u_max, u_min=u_min)
 
-    # Options: theta, theta_dot, u, y (angle), theta_hat, theta_hat_dot
+    # Options: theta, theta_dot, u, y (angle), y_dot (angular velocity), theta_hat, theta_hat_dot
     # Currently selected: theta, theta_hat
-    plot_settings = (False, False, True, False, True, False)
-    duration = 10.
+    plot_settings = (False, False, False, False, True, False, False)
+    duration = 100.
 
-    sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
-    # sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
+    # sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
+    sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=voltage_calculator)
 
 
 if __name__ == '__main__':

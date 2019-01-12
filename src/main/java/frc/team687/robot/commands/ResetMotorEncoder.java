@@ -1,5 +1,6 @@
 package frc.team687.robot.commands;
 
+import Jama.Matrix;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team687.robot.Robot;
@@ -17,6 +18,10 @@ public class ResetMotorEncoder extends Command{
 
     protected void initialize() {
         Robot.motor.setInput(JamaUtils.matrixFromDouble(0));
+        Robot.motor.setEstimate(new Matrix(new double[][] {
+            {0.},
+            {0.}
+        }));
 
         SmartDashboard.putString("Current command", "ResetMotorEncoder");
     }

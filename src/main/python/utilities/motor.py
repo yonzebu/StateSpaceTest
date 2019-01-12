@@ -9,6 +9,8 @@ RPM_TO_RADS_PER_S = 2. * math.pi / 60.
 # Stall Torque in N-m
 # Stall current in Amps
 # Battery voltage in Volts
+# Ordered [free speed, free current, stall torque, stall current, battery voltage]
+
 class MotorType(Enum):
     _PRO775 = [18730. * RPM_TO_RADS_PER_S, .7, .71, 134., 12.]
     _CIM = [5330. * RPM_TO_RADS_PER_S, 2.7, 2.41, 131., 12.]

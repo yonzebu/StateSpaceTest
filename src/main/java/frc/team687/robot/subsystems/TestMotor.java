@@ -42,7 +42,7 @@ public class TestMotor extends ControllerSubsystem{
                 MotorGains.U_min, MotorGains.U_max, TestMotorConstants.kInitialState,
                 new Matrix(1,1), TestMotorConstants.kGainsIndex);
 
-        this.m_motor = new TalonSRX(0);
+        this.m_motor = new TalonSRX(14);
 
         this.m_motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
         this.m_motor.setSensorPhase(true);
@@ -51,8 +51,12 @@ public class TestMotor extends ControllerSubsystem{
 
         this.m_nonlinearCompensator = (x_hat) -> JamaUtils.matrixFromDouble(0);
 
-        super.setInverted(true);
+        super.setInverted(false);
         
+    }
+
+    public void setEstimate(Matrix estimate) {
+        this.setXHat(estimate);
     }
 
     private void setPercentOutput(double percentOutput) {
@@ -105,7 +109,10 @@ public class TestMotor extends ControllerSubsystem{
     }
 
     public void trackGoal() {
-        Matrix measurement = new Matrix(new double[][]{{this.getEncoderPositionTicks()}});
+        Matrix measurement = new Matrix(new double[][]{
+            {this.getEncoderPositionTicks()},
+            {this.getEncoderSpeedTicks()}
+        });
         double voltageToSet = this.trackReference(this.m_currentGoal, measurement).get(0,0);
         this.setVoltage(voltageToSet);
     }
@@ -125,10 +132,13 @@ public class TestMotor extends ControllerSubsystem{
 
     public void reportToSmartDashboard() {
         SmartDashboard.putNumber("Position", getEncoderPositionTicks());
-        SmartDashboard.putNumber("Veclocity", getEncoderSpeedTicks());
+        SmartDashboard.putNumber("Velocity", getEncoderSpeedTicks());
         SmartDashboard.putNumber("Current", getCurrent());
         SmartDashboard.putNumber("Voltage", getVoltage());
         SmartDashboard.putNumber("Angle?", getEncoderPositionTicks() * 6.28 / 4096);
+        SmartDashboard.putNumber("Angular Velocity", getEncoderSpeedTicks() * 6.28 * 10.0 / 4096);
+        SmartDashboard.putNumber("EstPosition", getEstimatedAngle());
+        SmartDashboard.putNumber("EstVelocity", getEstimatedSpeed());
     }
 
     public void startLog() {
@@ -161,7 +171,7 @@ public class TestMotor extends ControllerSubsystem{
             }
             try {
                 m_writer = new FileWriter(m_file);
-                m_writer.append("Time,Position,Velocity,Voltage,Current," + 
+                m_writer.append("Time,Position,Velocity,Voltage,Current,Angle," + 
                 "EstimatedPosition,EstimatedSpeed\n");
                 m_logStartTime = Timer.getFPGATimestamp();
             } catch (IOException e) {
@@ -187,7 +197,8 @@ public class TestMotor extends ControllerSubsystem{
                 double timestamp = Timer.getFPGATimestamp() - m_logStartTime;
                 m_writer.append(String.valueOf(timestamp) + ","
                     + String.valueOf(getEncoderPositionTicks()) + "," + String.valueOf(getEncoderSpeedTicks()) + ","
-                    + String.valueOf(getVoltage()) + "," + String.valueOf(getCurrent()) + "," 
+                    + String.valueOf(getVoltage()) + "," + String.valueOf(getCurrent()) + ","
+                    + String.valueOf(getEncoderPositionTicks() * 6.28 / 4096.0) + ","
                     + String.valueOf(getEstimatedAngle()) + "," + String.valueOf(getEstimatedSpeed()) + "\n");
                 m_writer.flush();
             } catch (IOException e) {

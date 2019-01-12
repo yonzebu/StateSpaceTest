@@ -11,7 +11,7 @@ Heavily inspired by 1678's controls helper stuff
 """
 
 
-def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None, Kff=None, N=None):
+def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K=None, L=None, Kff=None):
     """Checks the validity of the system based on the sizes of matrices in the system"""
 
     if A is not None:
@@ -32,8 +32,6 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
         L = np.asmatrix(L)
     if Kff is not None:
         Kff = np.asmatrix(Kff)
-    if N is not None:
-        N = np.asmatrix(N)
 
     if A is not None:
         assert A.shape[0] == A.shape[1],                                            \
@@ -85,13 +83,6 @@ def check_validity(A=None, B=None, C=None, D=None, Q_noise=None, R_noise=None, K
     if Kff is not None and B is not None:
         assert Kff.shape[0] == B.shape[1],                                          \
             'Kff must have the same number of rows as there are inputs'
-
-    if N is not None and C is not None:
-        assert N.shape[1] == C.shape[0],                                            \
-            'N must have the same number of columns as there are sensor inputs'
-    if N is not None and B is not None:
-        assert N.shape[0] == B.shape[1],                                            \
-            'N must have the same number of rows as there are inputs'
 
 
 def place_poles(A, B, poles):

@@ -15,8 +15,8 @@ OUT_DIR = './src/main/java/frc/team687/robot/constants/'
 def write_gains():
     # Create a GainsWriter from a GainsList
     # In this instance, the subsystem in question is given its own individual Python file from which gains are created
-    gains_list = motor_test.create_gains()[0]
-    gains_list.add_gains(flywheel_test.create_gains()[0].get_gains(0))
+    gains_list = flywheel_test.create_gains()[0]
+    gains_list.add_gains(motor_test.create_gains()[0].get_gains(0))
     writer = GainsWriter(gains_list)
     # # Write the gains to the files indicated by their names, in the directory indicated
     writer.write_all([OUT_DIR, OUT_DIR])
