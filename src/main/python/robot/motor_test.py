@@ -10,7 +10,7 @@ from utilities.state_space.ss_sim import StateSpaceControlSim
 def create_gains():
 
     # Motor constants
-    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._PRO775.value
+    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._BAG.value
 
     # torque / Kt = I-stall, so Kt = torque / I-stall in N-m / A
     Kt = stall_torque / stall_current
@@ -25,7 +25,7 @@ def create_gains():
 
     # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in)
-    GR = 3.
+    GR = 9.
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
     MoI = 0.004
     # Efficiency of the system is the ratio between actual output torque and expected output torque
@@ -39,9 +39,9 @@ def create_gains():
     # Sensor ratio for CTRE Magnetic Encoders with Talon SRX's is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
     # Sensor ratio converts internal state (rad/s) to sensor units (ticks / .1s)
-    sensor_ratio = 4096. / (2. * math.pi * 10.)
+    sensor_ratio = 4096. * GR / (2. * math.pi * 10.)
     # Sensor ratio for position doesn't have deciseconds, so no 10
-    pos_sensor_ratio = 4096 / (2. * math.pi)
+    pos_sensor_ratio = 4096. * GR / (2. * math.pi)
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([

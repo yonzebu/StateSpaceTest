@@ -201,7 +201,7 @@ def clqr(A, B, Q_weight, R_weight):
 
     # Use the matrix that you get from solving the Ricatti equation to solve for the optimal gain matrix K
     # K = R^-1 * B.T * P
-    return np.asmatrix(scipy.linalg.inv(R_weight) * B.T * P)
+    return np.asmatrix(scipy.linalg.inv(R_weight + B.T * P * B) * B.T * P * A)
 
 
 def dlqr(A, B, Q_weight, R_weight):
