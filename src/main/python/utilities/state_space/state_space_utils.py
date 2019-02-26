@@ -148,7 +148,7 @@ def observability(A, C):
     return obsv
 
 
-def c2d(A, B, Q_noise, R_noise, dt: float):
+def c2d(A, B, Q_noise, R_noise, dt):
     """ Convert a continuous-time dynamical system to a discrete time system
         Continuous-time form: dx(t)/t = A*x(t) + B*u(t), where x is a state vector and u is control input
         Discrete-time form: x[k+1] = A*x[k] + B*u[k], where k is an incrementing integer according to preset time steps
@@ -288,7 +288,7 @@ def tracking_gains_c(A, B, C, K):
     K = np.asmatrix(K)
     check_validity(A=A, B=B, C=C, K=K)
 
-    n = A_d.shape[0]
+    n = A.shape[0]
     return np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A - B*K) * B))
 
 
@@ -305,4 +305,28 @@ def feedforward_gains(B, Q=None, R=None):
         return np.linalg.inv(B.T * Q * B) * B.T * Q
     else:
         return np.linalg.inv((B.T * Q * B) + R) * B.T * Q
+
+def augment_simo_sys(gainsList):
+    gains = gainsList.get_gains(0)
+    assert gains.p == 1, 'A system must be a single-input system to be augmented for integral control'
+    A = np.block([
+        [gains.A, gains.B],
+        [np.zeros((1, gains.B.shape[0])), 0]
+    ])
+    print '\nA= \n', A
+    B = np.block([
+        [gains.B],
+        [0]
+    ])
+    print '\nB= \n', B
+    C = np.block([
+        [gains.C, np.zeros((gains.q, 1))]
+    ])
+    print '\nC= \n', C
+    K = np.block([
+        [gains.K, 1]
+    ])
+    print '\nK= \n', K
+
+
 

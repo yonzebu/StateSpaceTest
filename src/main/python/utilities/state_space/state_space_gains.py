@@ -9,7 +9,7 @@ class Gains(object):
 
 class StateSpaceGains(Gains):
 
-    def __init__(self, name: str, A, B, C, D, Q_noise, R_noise, K, L, Kff, u_min, u_max, dt: float):
+    def __init__(self, name, A, B, C, D, Q_noise, R_noise, K, L, Kff, u_min, u_max, dt):
         self.A = np.asmatrix(A)
         self.B = np.asmatrix(B)
         self.C = np.asmatrix(C)
@@ -27,6 +27,10 @@ class StateSpaceGains(Gains):
 
         self.dt = dt
 
+        self.n = self.A.shape[0]
+        self.p = self.B.shape[1]
+        self.q = self.C.shape[0]
+
         self.name = name
 
         self.is_controllable = self.check_controllability()
@@ -34,10 +38,10 @@ class StateSpaceGains(Gains):
 
         self.check_system_validity()
 
-    def check_controllability(self) -> bool:
+    def check_controllability(self):
         return np.linalg.matrix_rank(controllability(self.A, self.B)) == self.A.shape[0]
 
-    def check_observability(self) -> bool:
+    def check_observability(self):
         return np.linalg.matrix_rank(observability(self.A, self.C)) == self.A.shape[0]
 
     def check_system_validity(self):
@@ -62,7 +66,7 @@ class StateSpaceGains(Gains):
 class ContinuousGains(Gains):
     """ This is a dumb class which I probably ain't using"""
 
-    def __init__(self, name: str, A, B, C, D, u_min, u_max, B_ref=None):
+    def __init__(self, A, B, C, D, u_min, u_max, B_ref=None):
 
         self.A = np.asmatrix(A)
         self.B = np.asmatrix(B)
@@ -109,7 +113,7 @@ class GainsList(object):
         else:
             self.gains_list.append(gains)
 
-    def get_gains(self, index: int):
+    def get_gains(self, index):
         return self.gains_list[index]
 
     def __len__(self):

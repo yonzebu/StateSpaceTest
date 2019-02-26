@@ -4,7 +4,7 @@ from utilities.state_space.state_space_gains import GainsList
 
 class StateSpaceController(object):
 
-    def __init__(self, gains: GainsList, u_initial, r_initial, u_max, u_min):
+    def __init__(self, gains, u_initial, r_initial, u_max, u_min):
         self.gains = gains
         self.gains_index = 0
         self.current_gains = self.gains.get_gains(self.gains_index)
@@ -15,7 +15,7 @@ class StateSpaceController(object):
         self.u = u_initial
         self.r = r_initial
 
-    def set_index(self, index: int):
+    def set_index(self, index):
         self.gains_index = index
         self.current_gains = self.gains.get_gains(index)
 

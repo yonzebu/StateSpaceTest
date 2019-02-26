@@ -133,11 +133,15 @@ def create_gains():
     u_min = -u_max
 
     gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
+    print('\nA= \n', A)
+    print('\nB= \n', B)
+    print('\nC= \n', C)
+    augment_simo_sys(gains)
 
     return gains, u_max, u_min
 
 
-def reference_calculator(time: float):
+def reference_calculator(time):
     if time < 0.1:
         return np.zeros((1, 1))
     elif time < 5.1:
@@ -150,7 +154,7 @@ def reference_calculator(time: float):
             )
 
 
-def input_calculator(time: float):
+def input_calculator(time):
     if time < 0.1:
         return np.zeros((1, 1))
     elif time < 5.1:

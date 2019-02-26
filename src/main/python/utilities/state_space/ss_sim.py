@@ -31,7 +31,7 @@ class StateSpaceControlSim(object):
         self.num_inputs = self.current_gains.B.shape[1]
         self.num_sensor_inputs = self.current_gains.C.shape[0]
 
-    def set_gains_index(self, index: int):
+    def set_gains_index(self, index):
         self.gains_index = 0
         self.current_gains = self.gains.get_gains(self.gains_index)
 
