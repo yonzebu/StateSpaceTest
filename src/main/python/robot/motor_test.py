@@ -75,7 +75,7 @@ def create_gains():
 
     dt = 0.02
 
-    A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
+    A_d, B_d, Q_d, R_d = c2d(A, B, dt, Q_noise, R_noise)
 
     # LQR weight matrix Q, a diagonal matrix whose diagonals express how bad it is for the corresponding state variable
     # to be in the wrong place.
@@ -124,10 +124,12 @@ def create_gains():
 
     gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
 
+    augment_simo_sys(A, B, C, K_d, Q_noise, R_noise, Q_weight, R_weight)
+
     return gains, u_max, u_min
 
 
-def reference_calculator(time: float):
+def reference_calculator(time):
     if time < 4:
         return np.zeros((2, 1))
     elif time < 8:
@@ -142,7 +144,7 @@ def reference_calculator(time: float):
             )
 
 
-def voltage_calculator(time: float):
+def voltage_calculator(time):
     return np.zeros((1, 1)) if time < 0. else np.asmatrix([[1.]])
 
 

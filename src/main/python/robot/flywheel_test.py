@@ -80,7 +80,7 @@ def create_gains():
 
     dt = .02
 
-    A_d, B_d, Q_d, R_d = c2d(A, B, Q_noise, R_noise, dt)
+    A_d, B_d, Q_d, R_d = c2d(A, B, dt, Q_noise, R_noise)
     # A_d = np.asmatrix([[0.9806]])
     # B_d = np.asmatrix([[-47.94]])
     # C = np.asmatrix([[-0.714]])
@@ -133,10 +133,6 @@ def create_gains():
     u_min = -u_max
 
     gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
-    print('\nA= \n', A)
-    print('\nB= \n', B)
-    print('\nC= \n', C)
-    augment_simo_sys(gains)
 
     return gains, u_max, u_min
 

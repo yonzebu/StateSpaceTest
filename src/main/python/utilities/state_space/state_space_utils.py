@@ -148,7 +148,7 @@ def observability(A, C):
     return obsv
 
 
-def c2d(A, B, Q_noise, R_noise, dt):
+def c2d(A, B, dt, Q_noise, R_noise=None):
     """ Convert a continuous-time dynamical system to a discrete time system
         Continuous-time form: dx(t)/t = A*x(t) + B*u(t), where x is a state vector and u is control input
         Discrete-time form: x[k+1] = A*x[k] + B*u[k], where k is an incrementing integer according to preset time steps
@@ -157,7 +157,8 @@ def c2d(A, B, Q_noise, R_noise, dt):
     A = np.asmatrix(A)
     B = np.asmatrix(B)
     Q_noise = np.asmatrix(Q_noise)
-    R_noise = np.asmatrix(R_noise)
+    if R_noise is not None:
+        R_noise = np.asmatrix(R_noise)
     check_validity(A=A, B=B, Q_noise=Q_noise, R_noise=R_noise)
 
     n = A.shape[0]
@@ -178,9 +179,12 @@ def c2d(A, B, Q_noise, R_noise, dt):
     G = np.asmatrix(scipy.linalg.expm(F * dt))
 
     Q_noise_discrete = A_discrete * G[:n, n:n+n]
-    R_noise_discrete = R_noise / dt
+    if R_noise is not None:
+        R_noise_discrete = R_noise / dt
+        return A_discrete, B_discrete, Q_noise_discrete, R_noise_discrete
+    else:
+        return A_discrete, B_discrete, Q_noise_discrete
 
-    return A_discrete, B_discrete, Q_noise_discrete, R_noise_discrete
 
 
 def clqr(A, B, Q_weight, R_weight):
@@ -259,45 +263,12 @@ def continuous_kalman(A, C, Q_noise, R_noise):
     # Applying lqr using A.T, C.T, Q, and R actually returns the transpose of the optimal Kalman gain L
     return np.asmatrix(clqr(A.T, C.T, Q_noise, R_noise)).T
 
-
-def tracking_gains_d(A_d, B_d, C, K_d):
-    """
-    Calculates the reference tracking gains in discrete time for tracking arbitrary step inputs
-    In discrete time, N = - inv(C * inv(A - B*K - I) * B), where I is an n x n identity matrix, and n is the size of A
-    """
-
-    A_d = np.asmatrix(A_d)
-    B_d = np.asmatrix(B_d)
-    C = np.asmatrix(C)
-    K_d = np.asmatrix(K_d)
-    check_validity(A=A_d, B=B_d, C=C, K=K_d)
-
-    n = A_d.shape[0]
-    return np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A_d - B_d*K_d - np.identity(n)) * B_d))
-
-
-def tracking_gains_c(A, B, C, K):
-    """
-    Calculates the reference tracking gains in continuous time for tracking arbitrary step inputs
-    In continuous time, N = - inv(C * inv(A - B*K) * B)
-    """
-
-    A = np.asmatrix(A)
-    B = np.asmatrix(B)
-    C = np.asmatrix(C)
-    K = np.asmatrix(K)
-    check_validity(A=A, B=B, C=C, K=K)
-
-    n = A.shape[0]
-    return np.asmatrix(-np.linalg.inv(-C * np.linalg.inv(A - B*K) * B))
-
-
 def feedforward_gains(B, Q=None, R=None):
     """
     Calculate Kff for discrete-time according to x[k+1] = Ax[k] + B*uff, where uff = Kff * (x[k+1] - A*x[k])
     uff = pinv(B) * (x[k+1] - A*x[k]), so Kff = pinv(B)
     According to 1678 and 971, there's an LQR-weighted solution or something like that, but I'm averse to implementing
-    things that I haven't seen a mathematical background for.
+    things that I haven't seen a mathematical background for. Nix that, I did it anyways
     """
     if Q is None:
         return np.linalg.pinv(B)
@@ -306,27 +277,59 @@ def feedforward_gains(B, Q=None, R=None):
     else:
         return np.linalg.inv((B.T * Q * B) + R) * B.T * Q
 
-def augment_simo_sys(gainsList):
-    gains = gainsList.get_gains(0)
-    assert gains.p == 1, 'A system must be a single-input system to be augmented for integral control'
-    A = np.block([
-        [gains.A, gains.B],
-        [np.zeros((1, gains.B.shape[0])), 0]
+def augment_simo_sys(A, B, C, K, Q_noise, R_noise, Q_weight, R_weight):
+    """
+    Takes in a set of continuous time gains and returns the augmented form of the gains in discrete time.
+    Augmented gains have integral control (u_error method) added on to them
+    """
+
+    n = A.shape[0]
+    p = B.shape[1]
+    q = C.shape[0]
+    
+    assert p == 1, 'A system must be a single-input system to be augmented for integral control'
+    A_c = np.block([
+        [A, B],
+        [np.zeros((1, n)), 0]
     ])
-    print '\nA= \n', A
-    B = np.block([
-        [gains.B],
+    print '\nA= \n', A_c
+
+    B_c = np.block([
+        [B],
         [0]
     ])
-    print '\nB= \n', B
+    print '\nB= \n', B_c
+
     C = np.block([
-        [gains.C, np.zeros((gains.q, 1))]
+        [C, np.zeros((q, 1))]
     ])
     print '\nC= \n', C
+
     K = np.block([
-        [gains.K, 1]
+        [K, 1]
     ])
     print '\nK= \n', K
+
+    Q_aug = np.block([
+        [Q_noise, np.zeros((n, 1))],
+        [np.zeros((1, n)), 1]
+    ])
+    print '\nQ= \n', Q_aug
+
+    A_d, B_d, Q_aug_d = c2d(A_c, B_c, 0.02, Q_aug)
+
+    Q_w_aug = np.block([
+        [Q_weight, np.zeros((n, 1))],
+        [np.zeros((1, n)), (1/0.1)**2]
+    ])
+    print '\nQ_w= \n', Q_w_aug
+
+
+    L = discrete_kalman(A_d, C, Q_aug, R_noise)
+    print '\nL= \n', L
+    Kff = feedforward_gains(B_d, Q_w_aug, R_weight)
+    print '\nKff= \n', Kff
+    return A, B, C, Q_aug, K, L, Kff
 
 
 
