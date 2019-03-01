@@ -7,9 +7,11 @@ import frc.team687.utilities.MathUtils;
 
 public class JamaUtils {
 
-    // Returns e^(N * scalar)
-    // Since this was only used with state space for pre-processing anyways (which has all been moved to python),
-    // this isn't really necessary anymore
+    /** 
+     * Returns e^(N * scalar)
+     * Since this was only used with state space for pre-processing anyways (which has all been moved to python),
+     * this isn't really necessary anymore
+     * */ 
     public static Matrix expm(Matrix N, double scalar) {
         if (isSquare(N)) {
             EigenvalueDecomposition E = N.eig();

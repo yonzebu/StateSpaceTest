@@ -23,18 +23,20 @@ def create_gains():
     # Although I'm using it right now I think
     d = free_current * Kt / free_speed
 
+    # Efficiency of the system is the ratio between actual output torque and expected output torque
+    # Okay I think this kind of is just going to be my "adjustment" 
+    # for if a motor's on the low or high ends of the normal free speed
+    efficiency = 0.95
     # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in)
-    GR = 9.
+    GR = 9. / efficiency
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
     MoI = 0.004
-    # Efficiency of the system is the ratio between actual output torque and expected output torque
-    efficiency = 0.9
 
     # k1 and k2, which determine the A and B matrices, are determined by solving the motor characterization equation
     # for angular acceleration
-    k1 = -efficiency * GR * GR * ((Kt / (Kv * R * MoI)) + (d / MoI))
-    k2 = efficiency * Kt * GR / (R * MoI)
+    k1 = -GR * GR * ((Kt / (Kv * R * MoI)) + (d / MoI))
+    k2 = Kt * GR / (R * MoI)
 
     # Sensor ratio for CTRE Magnetic Encoders with Talon SRX's is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
@@ -48,11 +50,21 @@ def create_gains():
         [0., 1.],
         [0., k1]
     ])
+    # A = np.asmatrix([
+    #     [0., 1.],
+    #     [0., -4.702]
+    # ])
 
     B = np.asmatrix([
         [0],
         [k2]
     ])
+    # B = np.asmatrix([
+    #     [0],
+    #     [51.87]
+    # ])
+
+    print('A_c = \n', A, '\nB_c = \n', B)
 
     C = np.asmatrix([
         [pos_sensor_ratio, 0],
@@ -64,13 +76,13 @@ def create_gains():
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
     Q_noise = np.asmatrix([
-        [0, 0],
-        [0, 1.e-2]
+        [(0.01)**2, 0],
+        [0, (2.5)**2]
     ])
 
     R_noise = np.asmatrix([
-        [1.e-3, 0],
-        [0, 1.e-2]
+        [(0.03)**2, 0],
+        [0, (1.1)**2]
     ])
 
     dt = 0.02
@@ -83,10 +95,10 @@ def create_gains():
     # and to use 1 / (acceptable error)^2 for each diagonal entry, each of which correspond to one state variable.
     # In this case, I decided acceptable velocity error was .01 rad/s and acceptable position error was .01 rad, so
     # the entries in Q_weight are calculated accordingly.
-    p = 0.1
+    p = 0.01
     Q_weight = np.asmatrix([
         [(p / 1.e-2)**2, 0],
-        [0, (p / 1.e-1)**2]
+        [0, (p / 5.e0)**2]
     ])
 
     # LQR weight matrix R, a diagonal matrix similar to Q, except with regards to the inputs, rather than states
@@ -118,7 +130,7 @@ def create_gains():
     Kff = np.asmatrix(feedforward_gains(B_d, Q_weight, R_weight))
 
     u_max = np.asmatrix([
-        [battery_voltage / 12.]
+        [battery_voltage]
     ])
     u_min = -u_max
 
@@ -134,12 +146,12 @@ def reference_calculator(time):
         return np.zeros((2, 1))
     elif time < 8:
         return np.asmatrix(
-            [[3.14],
+            [[13],
             [0.]]
             )
     else:
         return np.asmatrix(
-            [[-3.14],
+            [[-13],
             [0.]]
             )
 

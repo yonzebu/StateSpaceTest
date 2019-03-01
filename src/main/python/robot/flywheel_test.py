@@ -44,7 +44,7 @@ def create_gains():
     # voltage torque describes the effect of the voltage applied on the motor's angular acceleration
     v_torque = efficiency * Kt * GR / (R * MoI)
 
-    print(1/back_emf)
+    # print(1/back_emf)
 
     # Sensor ratio for CTRE Magnetic Encoders with Talon SRXs is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
@@ -63,10 +63,15 @@ def create_gains():
     ])
 
     C = np.asmatrix([
-        [sensor_ratio]
+        [1]
     ])
 
     D = np.zeros((1, 1))
+
+    A = np.asmatrix([[-4.702]])
+    B = np.asmatrix([[]])
+
+    # print('A=\n', A, '\nB=\n', B, '\nC=\n', C,'\nD=\n', D)
 
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
     # to maybe determine how much disturbance noise to expect
@@ -75,7 +80,7 @@ def create_gains():
     ])
 
     R_noise = np.asmatrix([
-        [1.0]
+        [0]
     ])
 
     dt = .02
@@ -85,6 +90,8 @@ def create_gains():
     # B_d = np.asmatrix([[-47.94]])
     # C = np.asmatrix([[-0.714]])
     # D = np.asmatrix([[-0.5159]])
+    Q_d = np.asmatrix([[0]])
+    R_d = np.asmatrix([[1.374]])
 
     # LQR weight matrix Q, a diagonal matrix whose diagonals express how bad it is for the corresponding state variable
     # to be in the wrong place.
@@ -132,6 +139,8 @@ def create_gains():
     ])
     u_min = -u_max
 
+    print('A_d=\n', A_d, '\nB_d=\n', B_d)
+
     gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
 
     return gains, u_max, u_min
@@ -178,8 +187,8 @@ def sim():
 
     # Options: theta_dot, u, y (angular velocity in talon units), theta_hat_dot
     # Currently selected: y
-    plot_settings = (True, False, False, True)
-    duration = 22.74
+    plot_settings = (False, True, False, True)
+    duration = 10
 
     sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
     # sim.plot_input_response(duration=duration, plot_settings=plot_settings, input_calculator=input_calculator)
