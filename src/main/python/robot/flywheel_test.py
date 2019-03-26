@@ -68,9 +68,6 @@ def create_gains():
 
     D = np.zeros((1, 1))
 
-    A = np.asmatrix([[-4.702]])
-    B = np.asmatrix([[]])
-
     # print('A=\n', A, '\nB=\n', B, '\nC=\n', C,'\nD=\n', D)
 
     # These values were kind of arbitrary, I should probably check the accuracy of sensors, and try to find some way
@@ -138,8 +135,6 @@ def create_gains():
         [battery_voltage]
     ])
     u_min = -u_max
-
-    print('A_d=\n', A_d, '\nB_d=\n', B_d)
 
     gains = GainsList(StateSpaceGains('FlywheelGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
 

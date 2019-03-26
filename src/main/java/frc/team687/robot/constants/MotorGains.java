@@ -7,38 +7,38 @@ import frc.team687.utilities.statespace.StateSpaceGains;
 public class MotorGains {
 
     public static final Matrix A = new Matrix( new double[][]
-        {{1.0, 0.018754053524133254},
-         {0.0, 0.8780479988407994}}
+        {{1.0, 0.009955012505682832},
+         {0.0, 0.9910160139098992}}
     );
     public static final Matrix B = new Matrix( new double[][]
-        {{0.015126667615452397},
-         {1.4805831729578884}}
+        {{0.0023285164193457305},
+         {0.46500387362071116}}
     );
     public static final Matrix C = new Matrix( new double[][]
-        {{6175.881918041717, 0.0},
-         {0.0, 617.5881918041716}}
+        {{651.8986469044033, 0.0},
+         {0.0, 65.18986469044033}}
     );
     public static final Matrix D = new Matrix( new double[][]
         {{0.0},
          {0.0}}
     );
     public static final Matrix Q_noise = new Matrix( new double[][]
-        {{1.713524423939017e-05, 0.0010991078862064218},
-         {0.0010991078862064216, 0.11006566465984906}}
+        {{3.0692916133149742e-06, 0.00030969460621344246},
+         {0.0003096946062134424, 0.06193934161714947}}
     );
     public static final Matrix R_noise = new Matrix( new double[][]
-        {{0.045, 0.0},
-         {0.0, 60.50000000000001}}
+        {{0.09, 0.0},
+         {0.0, 121.00000000000001}}
     );
     public static final Matrix K = new Matrix( new double[][]
-        {{0.9264515394429866, 0.0930904218144866}}
+        {{0.5804118568397637, 0.13978035346974577}}
     );
     public static final Matrix L = new Matrix( new double[][]
-        {{0.00016266581683326202, 3.0248504728341782e-05},
-         {3.6353482326551185e-05, 0.0014160637342987457}}
+        {{0.002057459242068762, 8.820200451664257e-05},
+         {0.06258548133753324, 0.008312845457613656}}
     );
     public static final Matrix Kff = new Matrix( new double[][]
-        {{0.015123074606134731, 5.920925971125776e-06}}
+        {{0.00083826401373399, 6.696040625089098e-07}}
     );
     public static final Matrix U_min = new Matrix( new double[][]
         {{-12.0}}
@@ -46,7 +46,7 @@ public class MotorGains {
     public static final Matrix U_max = new Matrix( new double[][]
         {{12.0}}
     );
-    public static final double dt = 0.02;
+    public static final double dt = 0.01;
     
     public static StateSpaceGains kMotorGains = new StateSpaceGains(A, B, C, D, Q_noise, R_noise,
                                                                 K, L, Kff, dt); 

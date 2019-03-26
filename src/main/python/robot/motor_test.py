@@ -3,6 +3,7 @@ from utilities.state_space.state_space_utils import *
 from utilities.state_space.state_space_gains import StateSpaceGains, GainsList
 from utilities.motor import MotorType
 from utilities.state_space.ss_sim import StateSpaceControlSim
+import tkinter as tk
 
 
 # This is a theoretical state space model for a 775pro with velocity control
@@ -10,7 +11,7 @@ from utilities.state_space.ss_sim import StateSpaceControlSim
 def create_gains():
 
     # Motor constants
-    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._BAG.value
+    free_speed, free_current, stall_torque, stall_current, battery_voltage = MotorType._775PRO.value
 
     # torque / Kt = I-stall, so Kt = torque / I-stall in N-m / A
     Kt = stall_torque / stall_current
@@ -29,7 +30,7 @@ def create_gains():
     efficiency = 0.95
     # Constants for the system the motor is used in
     # Gear ratio (torque-out / torque-in)
-    GR = 9. / efficiency
+    GR = 3. / efficiency
     # Moment of inertia in kg-m^2, assumed 1 for simplicity
     MoI = 0.004
 
@@ -41,9 +42,9 @@ def create_gains():
     # Sensor ratio for CTRE Magnetic Encoders with Talon SRX's is 4096 ticks/rotation
     # Angular velocity is measured in ticks / .1 s, so the sensor ratio must be adjusted
     # Sensor ratio converts internal state (rad/s) to sensor units (ticks / .1s)
-    sensor_ratio = 4096. * GR / (2. * math.pi * 10.)
+    sensor_ratio = 4096. / (2. * math.pi * 10.)
     # Sensor ratio for position doesn't have deciseconds, so no 10
-    pos_sensor_ratio = 4096. * GR / (2. * math.pi)
+    pos_sensor_ratio = 4096. / (2. * math.pi)
 
     # Setting up the system based on constants solved for via motor characterization
     A = np.asmatrix([
@@ -64,8 +65,6 @@ def create_gains():
     #     [51.87]
     # ])
 
-    print('A_c = \n', A, '\nB_c = \n', B)
-
     C = np.asmatrix([
         [pos_sensor_ratio, 0],
         [0, sensor_ratio]
@@ -85,7 +84,7 @@ def create_gains():
         [0, (1.1)**2]
     ])
 
-    dt = 0.02
+    dt = 0.01
 
     A_d, B_d, Q_d, R_d = c2d(A, B, dt, Q_noise, R_noise)
 
@@ -95,7 +94,7 @@ def create_gains():
     # and to use 1 / (acceptable error)^2 for each diagonal entry, each of which correspond to one state variable.
     # In this case, I decided acceptable velocity error was .01 rad/s and acceptable position error was .01 rad, so
     # the entries in Q_weight are calculated accordingly.
-    p = 0.01
+    p = 0.0005
     Q_weight = np.asmatrix([
         [(p / 1.e-2)**2, 0],
         [0, (p / 5.e0)**2]
@@ -107,13 +106,13 @@ def create_gains():
     # is battery voltage (limited slightly in this case in case of mechanical inefficiency), the entry in R_weight is
     # calculated accordingly
     R_weight = np.asmatrix([
-        [1. / ((battery_voltage * 0.5/6.) ** 2)]
+        [1. / ((battery_voltage) ** 2)]
     ])
 
     # This was an arbitrary choice, and I'm going to actually have to look into optimal pole placement and such
     # Maybe also matlab/octave state space sim stuff
     # Pole placement actually doesn't seem to quite be working for velocity-controlled motors
-    desired_poles = [.5 - 0.1j, .5 + 0.1j]
+    desired_poles = [.7 - 0.1j, .7 + 0.1j]
 
     # Pole placement
     # K_d = place_poles(A_d, B_d, desired_poles)
@@ -134,9 +133,9 @@ def create_gains():
     ])
     u_min = -u_max
 
+    A_u, B_u, C_u, Q_u, K_u, L_u, Kff_u = augment_simo_sys(A, B, C, K_d, Q_noise, R_noise, Q_weight, R_weight)
     gains = GainsList(StateSpaceGains('MotorGains', A_d, B_d, C, D, Q_d, R_d, K_d, L_d, Kff, u_min, u_max, dt))
-
-    augment_simo_sys(A, B, C, K_d, Q_noise, R_noise, Q_weight, R_weight)
+    # gains = GainsList(StateSpaceGains('MotorGains', A_u, B_u, C_u, D, Q_u, R_d, K_u, L_u, Kff_u, u_min, u_max, dt))
 
     return gains, u_max, u_min
 
@@ -157,7 +156,7 @@ def reference_calculator(time):
 
 
 def voltage_calculator(time):
-    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[1.]])
+    return np.zeros((1, 1)) if time < 0. else np.asmatrix([[12.]])
 
 
 def sim():
@@ -176,7 +175,7 @@ def sim():
 
     # Options: theta, theta_dot, u, y (angle), y_dot (angular velocity), theta_hat, theta_hat_dot
     # Currently selected: theta, theta_hat
-    plot_settings = (False, False, False, False, True, False, False)
+    plot_settings = (False, True, False, False, False, False, True)
     duration = 100.
 
     # sim.plot_reference_tracking(duration=duration, plot_settings=plot_settings, reference_calculator=reference_calculator, use_ff=False)
@@ -184,5 +183,14 @@ def sim():
 
 
 if __name__ == '__main__':
-    sim()
+    from tkinter import *
+    master = Tk() 
+    var1 = IntVar() 
+    Checkbutton(master, text='male', variable=var1).grid(row=0, sticky=W) 
+    var2 = IntVar() 
+    Checkbutton(master, text='female', variable=var2).grid(row=1, sticky=W)
+    button = tk.Button(master, text='Stop', width=25, command=lambda: print(var1.get(), '\n', var2.get(), '\n')) 
+    button.grid(row=2, sticky=W)
+    mainloop() 
+    # sim()
 

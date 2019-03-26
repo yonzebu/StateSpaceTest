@@ -292,29 +292,24 @@ def augment_simo_sys(A, B, C, K, Q_noise, R_noise, Q_weight, R_weight):
         [A, B],
         [np.zeros((1, n)), 0]
     ])
-    print '\nA= \n', A_c
 
     B_c = np.block([
         [B],
         [0]
     ])
-    print '\nB= \n', B_c
 
     C = np.block([
         [C, np.zeros((q, 1))]
     ])
-    print '\nC= \n', C
 
-    K = np.block([
+    K_u = np.block([
         [K, 1]
     ])
-    print '\nK= \n', K
 
     Q_aug = np.block([
         [Q_noise, np.zeros((n, 1))],
-        [np.zeros((1, n)), 1]
+        [np.zeros((1, n)), .1]
     ])
-    print '\nQ= \n', Q_aug
 
     A_d, B_d, Q_aug_d = c2d(A_c, B_c, 0.02, Q_aug)
 
@@ -322,14 +317,10 @@ def augment_simo_sys(A, B, C, K, Q_noise, R_noise, Q_weight, R_weight):
         [Q_weight, np.zeros((n, 1))],
         [np.zeros((1, n)), (1/0.1)**2]
     ])
-    print '\nQ_w= \n', Q_w_aug
-
 
     L = discrete_kalman(A_d, C, Q_aug, R_noise)
-    print '\nL= \n', L
     Kff = feedforward_gains(B_d, Q_w_aug, R_weight)
-    print '\nKff= \n', Kff
-    return A, B, C, Q_aug, K, L, Kff
+    return A_d, B_d, C, Q_aug, K_u, L, Kff
 
 
 
